@@ -1,9 +1,8 @@
 [user]
-  name = Shogo Iwano
-  email = shiwano@gmail.com
+  name = Yoshiyuki Ito
+  email = thanks2music@gmail.com
 [github]
-  user = shiwano
-  token = !security 2>&1 >/dev/null find-generic-password -gs \"GitHub API Token\" | ruby -e 'print $1 if STDIN.gets =~ /^password: \\\"(.*)\\\"$/'
+  user = thanks2music
 [core]
   excludesfile = ~/.gitignore
   autocrlf = false
@@ -11,68 +10,90 @@
 [color]
   ui = auto
 [alias]
-  gommit = commit
-  r = restore
-  rc = "!sh -c 'git restore -s $0 .'"
-  sw = switch
-  swd = switch --detach
+  st = status
+  sh = show
+  so = remote show origin
   ci = commit
   cim = commit -m
   cia = commit --amend -C HEAD
-  a = add -A
-  au = add -u
-  ap = add -p
-  s = status
-  up = pull --rebase
-  diff = diff --color
-  di = diff --color
-  dica = diff --color --cached
-  dist = diff --color --staged
-  diw = diff --color --word-diff
-  di-csv = diff --color --word-diff-regex="[^[:blank:],]"
-  dist-csv = diff --staged --color --word-diff-regex="[^[:blank:],]"
-  diff-branch = !git diff $(git main-branch) $(git current-branch)
-  mt = mergetool
-  merge-prefer-current-branch = merge -X ours
-  merge-prefer-target-branch = merge -X theirs
-  checkout-prefer-current-branch = checkout --ours
-  checkout-prefer-target-branch = checkout --theirs
-  topic = !git switch $(git main-branch) -c
-  topic-develop = switch origin/develop -c
-  topic-production = switch origin/production -c
-  main-branch = "!sh -c 'if [ `git branch -r --list origin/master` ]; then echo origin/master; else echo origin/main; fi'"
-  current-branch = symbolic-ref --short HEAD
-  current-remote-branch = "!sh -c 'echo `git upstream-remote`/`git current-branch`'"
-  upstream-branch = "!sh -c 'git branch -vv --list `git current-branch` --format=\"%(upstream:short)\"'"
-  upstream-remote = "!sh -c 'git upstream-branch | cut -d / -f 1'"
-  la = log --graph --all --color --pretty='%x09%h %cn%x09%s %Cred%d%Creset'
-  log-all = log --graph --all --color --pretty='%x09%h %cn%x09%s %Cred%d%Creset'
-  lg = log --graph --date=short --pretty=format:'%Cgreen%h %cd %Cblue%cn %Creset%s'
+  f = fetch
+  ft = fetch
+  up = pull --rebase       # pull rebase
+  rbm = rebase master      # master$B$X$N(Brebase$B$O$h$/;H$&$N$G(Balias
+  cm =  commit -m          # commit -m
+  co = checkout
+  cb = checkout -b         # $B%V%i%s%A:n$C$F%A%'%C%/%"%&%H(B
+  com  = checkout master   # master$B$K%A%'%C%/%"%&%H(B
+  up   = pull --rebase     # $B:G?7$K$9$k(B
+  # branch$B4XO"(B
+  br = branch
+  ba = branch -a           # origin$B$b4^$a$?A4$F$N(Bbranch$B$rI=<((B
+  bm = branch --merged     # merge$B:Q$_$N(Bbranch$B$rI=<((B
+  bn = branch --no-merged  # merge$B$7$F$J$$(Bbranch$B$rI=<((B
+  rup = remote prune origin # $B%j%b!<%H$N>uBV$r:FEY<hF@(B
+  current-branch = "!sh -c \"git branch | grep '*' | awk '{ print \\$2 }' \""
+  p4r = "!sh -c 'git push origin HEAD:refs/for/master/`git current-branch`'"
+  # log$B4XO"(B
+  wc = whatchanged         # log$B$KJQ99$5$l$?%U%!%$%k$b0l=o$K=P$9(B
+  ls = log --stat          # log$B$KJQ99$5$l$?%U%!%$%k$b0l=o$K=P$9(B
+  lg   = log --graph --branches --date=short --decorate --pretty=format:'%C(yellow)%h %Cgreen%ad %Cblue%cn %Creset%s %C(magenta)%d'
+  lp = log -p              # diff$B$b0l=o$K=P$9(B
+  la = log --pretty=\"format:%ad %h (%an): %s\" --date=short  # $B$6$C$/$j%m%0=P$9(B
+  lr = log origin          # origin$B$N(Blog
+  tree = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+  t = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+  oneline = log --pretty=oneline
+  ranking = shortlog -s -n --no-merges
+  # log$B$r(Btree$BI=<((B
   log-graph = log --graph --date=short --pretty=format:'%Cgreen%h %cd %Cblue%cn %Creset%s'
-  ls = log --stat --summary --color
-  log-stat = log --stat --summary --color
-  lp = log --patch --color
-  log-patch = log --patch --color
-  log-shallow-since = log --date=raw
-  ignore = update-index --assume-unchanged
-  unignore = update-index --no-assume-unchanged
-  ignored = !git ls-files -v | grep "^[a-z]"
-  unstage = reset HEAD
-  us = reset HEAD
-  back = reset HEAD~
-  stash-ls = stash list --stat
-  rank = shortlog -s -n -e
-  sed = "!sh -c 'cd ${GIT_PREFIX:-.} && git ls-files \"$0\" | xargs sed -i -e \"$1\"'"
-  sed-help = "!echo \"git sed '**/*.go' 's/foo/bar/g'\""
-  rename = "!sh -c 'git branch -m `git current-branch` $0'"
-  upstream = "!sh -c 'git branch --set-upstream-to=$0 `git current-branch`'"
-  mru = for-each-ref --format='%(refname:short) (%(authordate:relative))' --sort=committerdate refs/heads/
-  reset-remote = "!sh -c 'git fetch && git reset --hard `git current-remote-branch`'"
-  upup = "!sh -c 'git fetch && git rebase `git current-remote-branch`'"
-  editor = "!sh -c 'if type nvim > /dev/null; then echo nvim; else echo vim; fi'"
-  go-version = "!sh -c 'TZ=UTC git --no-pager show --quiet --abbrev=12 --date=\"format-local:%Y%m%d%H%M%S\" --format=\"v0.0.0-%cd-%h\"'"
-  log-shallow-since = log --date=raw
-  empty-commit = commit --allow-empty -m
+  log-all = log --graph --all --color --pretty='%x09%h %cn%x09%s %Cred%d%Creset'
+  # Rebase$B4XO"(B
+  rba  = rebase --abort
+  rbc  = rebase --continue
+  rbm  = rebase master
+  ri5  = rebase -i HEAD~5
+  ri10 = rebase -i HEAD~10
+  ref  = reflog
+  refa = reflog --all
+  rl   = reflog
+  rla  = reflog --all
+  # rm $B4X78(B
+  rmall = rm $(git ls-files --deleted) # deleted$B%U%!%$%k$rA4$F(B git rm
+  # diff$B4XO"(B
+  d  = diff
+  dm = diff master           # master$B$H$N(Bdiff
+  dw = diff --color-words
+  ds = diff --staged
+  dw = diff --color-words    # $BC18lC10L$G$$$m$D$1$F(Bdiff
+  dc = diff --cached         # add$B$5$l$F$$$k$b$N$H$N(Bdiff
+  ds = diff --staged         # $BF1>e(B(1.6.1$B0\9T(B)
+  d1 = diff HEAD~            # HEAD$B$+$i(B1$B$DA0$H(Bdiff
+  d2 = diff HEAD~~           # HEAD$B$+$i(B2$B$DA0$H(Bdiff
+  d3 = diff HEAD~~~          # HEAD$B$+$i(B3$B$DA0$H(Bdiff
+  d4 = diff HEAD~~~~         # HEAD$B$+$i(B4$B$DA0$H(Bdiff
+  d5 = diff HEAD~~~~~        # HEAD$B$+$i(B5$B$DA0$H(Bdiff
+  d10 = diff HEAD~~~~~~~~~~  # HEAD$B$+$i(B10$BA0$H(Bdiff
+  # Push
+  push-for-review = "!sh -c 'git push origin HEAD:refs/for/master/`git current-branch`'"
+  # Gerrit
+  review = "!sh -c 'git push origin HEAD:refs/for/master/`git current-branch`'"
+  # GitHub
+  pr = !git push origin $(git current-branch)
+  kokomade = tag -f '$B$3$3$^$GFI$s$@(B' origin/master
+  newspaper = log -p --reverse '$B$3$3$^$GFI$s$@(B'..origin/master
+  # merge$B$N:]$K(Bconflict$B$,5/$-$?%U%!%$%k$rJT=8(B
+  edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
+  # merge$B$N:]$K(Bconflict$B$,5/$-$?%U%!%$%k$r(Badd
+  add-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
+  wip = commit -am '[CI SKIP] WIP' --allow-empty
+  # grep$B4XO"(B
+  gg = git grep -n
+  gr = grep
+  gper = grep
+  gn = grep -n
+  # ranking
+  ranking = shortlog -s -n --no-merges
+  gommit = commit
   diff-master = "!sh -c 'git diff origin/master `git current-branch`'"
   diff-main = "!sh -c 'git diff origin/main `git current-branch`'"
 [merge]

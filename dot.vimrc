@@ -27,7 +27,7 @@ endif
 call plug#begin('~/.vim/plugged')
 
 " Color scheme
-Plug 'fnune/base16-vim'
+Plug 'chriskempson/base16-vim'
 
 " Syntax highlight
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
@@ -114,7 +114,8 @@ augroup highlightIdegraphicSpace
   autocmd VimEnter,WinEnter * match IdeographicSpace /　/
 augroup END
 
-colorscheme base16-default-dark
+" colorscheme base16-default-dark
+" colorscheme base16-monokai
 
 if exists('+colorcolumn')
   autocmd Filetype * set colorcolumn=81
@@ -669,6 +670,7 @@ function! s:setup_netrw()
   nnoremap <buffer> qq :q<CR>
 endfunction
 "------------------------------------------------------------------------------
+
 " nvim-treesitter
 lua <<EOF
 require'nvim-treesitter.configs'.setup {
@@ -680,4 +682,5 @@ require'nvim-treesitter.configs'.setup {
   ignore_install = { 'haskell', 'typescript', 'elixir' }
 }
 EOF
+
 autocmd BufEnter,BufWinEnter,WinEnter *ts,*.tsx TSBufDisable highlight
