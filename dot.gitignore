@@ -7,11 +7,13 @@ tags
 .local.vimrc
 *.userprefs
 *.cache
+*style.css
 _ignored/
 _ignored.meta
 dump.rdb
 *.sln.DotSettings.user
 .projections.json
+node_modules/
 
 */AssetCaches/
 */Assets/Editor/JetBrains/

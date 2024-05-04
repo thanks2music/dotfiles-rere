@@ -39,15 +39,6 @@ fi
 autoload -Uz compinit
 compinit
 
-# Color scheme -----------------------------------------------------------------
-
-BASE16_SHELL="$HOME/.config/base16-shell/"
-[ -n "$PS1" ] && \
-    [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
-        eval "$("$BASE16_SHELL/profile_helper.sh")"
-
-base16_default
-
 # Envs -------------------------------------------------------------------------
 export PATH="$PATH:/opt/homebrew/bin/"
 export PATH=$HOME/bin:$BREW_PREFIX/bin:$BREW_PREFIX/sbin:$GOPATH/bin:$PATH
@@ -105,10 +96,16 @@ if type fzf > /dev/null; then
 fi
 
 # asdf -------------------------------------------------------------------------
+## Git Ver
+. "$HOME/.asdf/asdf.sh"
 
+## Brew Ver
 if [ -e $BREW_PREFIX/opt/asdf/libexec/asdf.sh ]; then
   . $BREW_PREFIX/opt/asdf/libexec/asdf.sh
 fi
+
+## for Java
+. ~/.asdf/plugins/java/set-java-home.zsh
 
 # Nix --------------------------------------------------------------------------
 
@@ -138,6 +135,12 @@ fi
 if [ -d "$HOME/Library/Android/sdk" ]; then
   export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
 fi
+
+# rbenv ------------------------------------------------------------------------
+
+[[ -d ~/.rbenv  ]] && \
+  export PATH=${HOME}/.rbenv/bin:${PATH} && \
+  eval "$(rbenv init -)"
 
 # Vim --------------------------------------------------------------------------
 
@@ -299,7 +302,6 @@ alias ll='ls -l --block-size=KB'
 alias la='ls -A'
 alias lal='ls -l -A --block-size=KB'
 alias tmux='tmuxx'
-alias authorize-shiwano='curl https://github.com/shiwano.keys >> ~/.ssh/authorized_keys'
 alias lsof-listen='lsof -i -P | grep "LISTEN"'
 alias reload-shell='exec $SHELL -l'
 alias dotfiles='cd ~/dotfiles'
@@ -468,6 +470,9 @@ setopt auto_cd
 
 # C-s, C-qを無効にする。
 setopt no_flow_control
+
+# コマンドライン引数のグロッビング
+setopt nonomatch
 
 # Change open files limit and user processes limit.
 # See: https://gist.github.com/tombigel/d503800a282fcadbee14b537735d202c
