@@ -1,7 +1,6 @@
 # Premise
 tap "golangci/tap"
 tap "homebrew/bundle"
-tap "homebrew/cask-versions"
 tap "homebrew/services"
 tap "stripe/stripe-cli"
 
