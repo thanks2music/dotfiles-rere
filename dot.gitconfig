@@ -112,8 +112,8 @@
   prune = true
 [ghq]
   root = ~/code/src
-[url "git@github.com:"]
-  insteadOf = https://github.com/
+# [url "git@github.com:"]
+#  insteadOf = https://github.com/
 [filter "lfs"]
   process = git-lfs filter-process
   required = true
