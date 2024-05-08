@@ -1,0 +1,19 @@
+# 一番初めのpaneを選択
+select-pane -t 0
+# 上下にウィンドウを分割する
+split-window -v
+split-window -h
+# 1番目(下側)のウィンドウを選択
+select-pane -t 0
+# 左右にウィンドウを分割
+split-window -h
+
+# 一番初めのpaneに戻る
+select-pane -t 0
+
+# それぞれにzsh設定ファイルを読み込ませる
+# tmuxの場合local/.zprofileと.zsh_historyは読み込まないので読み込ませる。
+send-keys -t 1 'source ~/.zprofile ~/.zsh_history' C-m
+send-keys -t 2 'source ~/.zprofile ~/.zsh_history' C-m
+send-keys -t 3 'source ~/.zprofile ~/.zsh_history' C-m
+send-keys -t 4 'source ~/.zprofile ~/.zsh_history' C-m
