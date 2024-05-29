@@ -34,15 +34,12 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'mustache/vim-mustache-handlebars'
 Plug 'aklt/plantuml-syntax'
 Plug 'ekalinin/Dockerfile.vim'
-Plug 'godlygeek/tabular' " required by vim-markdown
 Plug 'plasticboy/vim-markdown'
 Plug 'vim-scripts/ShaderHighLight'
 Plug 'cespare/vim-toml'
 Plug 'posva/vim-vue'
 Plug 'hashivim/vim-terraform'
-Plug 'shiwano/vim-hcl'
 Plug 'chr4/nginx.vim'
-Plug 'google/vim-maktaba' " required by vim-bazel
 Plug 'bazelbuild/vim-bazel'
 Plug 'bfontaine/Brewfile.vim'
 Plug 'mechatroner/rainbow_csv'
@@ -51,6 +48,7 @@ Plug 'mattn/vim-gomod'
 Plug 'aklt/plantuml-syntax'
 
 " Finder
+Plug 'nvim-neo-tree/neo-tree.nvim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
@@ -58,12 +56,10 @@ Plug 'junegunn/fzf.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Input support
-Plug 'kana/vim-smartinput'
-Plug 'buoto/gotests-vim'
 Plug 'kburdett/vim-nuuid'
 Plug 'LeafCage/yankround.vim'
 Plug 'scrooloose/nerdcommenter'
-Plug 'vim-scripts/Align'
+" Plug 'kana/vim-smartinput'
 
 " Debug
 Plug 'sebdah/vim-delve'
@@ -75,12 +71,10 @@ Plug 'w0rp/ale'
 
 " Format
 Plug 'rhysd/vim-clang-format', { 'for': ['c', 'cpp', 'objc'] }
-Plug 'fatih/vim-hclfmt'
 Plug 'mattn/vim-goimports'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 
 " Misc
-Plug 'jmcantrell/vim-virtualenv'
 Plug 'ruanyl/vim-gh-line'
 Plug 'vim-scripts/taglist.vim'
 Plug 'tpope/vim-rails'
@@ -96,7 +90,14 @@ Plug 'danro/rename.vim'
 Plug 'thinca/vim-qfreplace'
 Plug 'arthurxavierx/vim-caser'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
-" Plug 'github/copilot.vim'
+
+" Dependence
+Plug 'MunifTanjim/nui.nvim' " required by nvim-neo-tree
+Plug 'nvim-lua/plenary.nvim' " required by nvim-neo-tree
+Plug 'nvim-tree/nvim-web-devicons' " required by nvim-neo-tree
+Plug '3rd/image.nvim' " required by nvim-neo-tree
+Plug 'google/vim-maktaba' " required by vim-bazel
+Plug 'godlygeek/tabular' " required by vim-markdown
 
 call plug#end()
 "------------------------------------------------------------------------------
