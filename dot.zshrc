@@ -391,6 +391,9 @@ bindkey "^N" history-beginning-search-forward-end
 zle -N select-history
 bindkey '^r' select-history
 
+# zsh-autosuggestions
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
 # Utilities --------------------------------------------------------------------
 
 # シェルのプロセスごとに履歴を共有
