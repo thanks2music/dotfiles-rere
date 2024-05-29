@@ -13,7 +13,7 @@ select-pane -t 0
 
 # それぞれにzsh設定ファイルを読み込ませる
 # tmuxの場合local/.zprofileと.zsh_historyは読み込まないので読み込ませる。
-send-keys -t 1 'source ~/.zprofile ~/.zsh_history' C-m
-send-keys -t 2 'source ~/.zprofile ~/.zsh_history' C-m
-send-keys -t 3 'source ~/.zprofile ~/.zsh_history' C-m
-send-keys -t 4 'source ~/.zprofile ~/.zsh_history' C-m
+send-keys -t 1 'source ~/.zshrc' C-m
+send-keys -t 2 'source ~/.zshrc' C-m
+send-keys -t 3 'source ~/.zshrc' C-m
+send-keys -t 4 'source ~/.zshrc' C-m
