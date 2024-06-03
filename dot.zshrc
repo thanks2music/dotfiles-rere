@@ -107,6 +107,9 @@ fi
 ## for Java
 . ~/.asdf/plugins/java/set-java-home.zsh
 
+## for GO
+. ~/.asdf/plugins/golang/set-env.zsh
+
 # Nix --------------------------------------------------------------------------
 
 if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then
