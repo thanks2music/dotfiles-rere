@@ -95,6 +95,9 @@ if type fzf > /dev/null; then
   export FZF_DEFAULT_COMMAND="rg --files --hidden -g '!.git' --sort path"
 fi
 
+# for Alfred
+export DIR_HOME="/Users/yoshi/Dropbox"
+
 # asdf -------------------------------------------------------------------------
 ## Git Ver
 . "$HOME/.asdf/asdf.sh"
