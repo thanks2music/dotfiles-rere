@@ -1,3 +1,5 @@
+# Amazon Q pre block. Keep at the top of this file.
+[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
 export TERM=xterm-256color
 export LANG=ja_JP.UTF-8
 export XDG_CONFIG_HOME=$HOME/.config
@@ -395,8 +397,6 @@ bindkey "^N" history-beginning-search-forward-end
 zle -N select-history
 bindkey '^r' select-history
 
-# Amazon Q pre block. Keep at the top of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
 # zsh-autosuggestions
 # NOTE: 試験的にAmazon-Qを使用するため、zsh-autosuggestionsを無効化する
 # source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
