@@ -21,6 +21,7 @@
   up = pull --rebase       # pull rebase
   rbm = rebase master      # master$B$X$N(Brebase$B$O$h$/;H$&$N$G(Balias
   cm =  commit -m          # commit -m
+  came =  commit --amend
   co = checkout
   cb = checkout -b         # $B%V%i%s%A:n$C$F%A%'%C%/%"%&%H(B
   com  = checkout master   # master$B$K%A%'%C%/%"%&%H(B
