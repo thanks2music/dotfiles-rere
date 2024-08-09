@@ -323,8 +323,9 @@ alias gg='git grep'
 alias r='restore-git-files' # hide 'r' which is zsh's built-in command
 alias t='tmux'
 alias reload='source ~/.zshrc && exec $SHELL'
-
-# rc
+## Node
+alias pn='pnpm'
+## rc
 alias vimrc='vi ~/.vimrc'
 alias zshrc='vi ~/.zshrc'
 alias tmuxrc='vi ~/.tmux.conf'
