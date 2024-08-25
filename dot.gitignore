@@ -7,7 +7,6 @@ tags
 .local.vimrc
 *.userprefs
 *.cache
-*style.css
 _ignored/
 _ignored.meta
 dump.rdb
