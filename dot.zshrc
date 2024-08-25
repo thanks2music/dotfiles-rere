@@ -325,6 +325,7 @@ alias t='tmux'
 alias reload='source ~/.zshrc && exec $SHELL'
 ## Node
 alias pn='pnpm'
+alias pm='pnpm'
 ## rc
 alias vimrc='vi ~/.vimrc'
 alias zshrc='vi ~/.zshrc'
