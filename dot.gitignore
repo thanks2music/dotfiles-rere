@@ -7,13 +7,14 @@ tags
 .local.vimrc
 *.userprefs
 *.cache
+*.idea
 _ignored/
 _ignored.meta
 dump.rdb
 *.sln.DotSettings.user
 .projections.json
 node_modules/
-
+*.envrc
 */AssetCaches/
 */Assets/Editor/JetBrains/
 */Assets/Editor/JetBrains.meta
