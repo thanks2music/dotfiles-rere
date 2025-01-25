@@ -8,12 +8,14 @@ tags
 *.userprefs
 *.cache
 *.idea
+*ignored_memo.md
 _ignored/
 _ignored.meta
 dump.rdb
 *.sln.DotSettings.user
 .projections.json
 node_modules/
+# *.vscode
 *.envrc
 */AssetCaches/
 */Assets/Editor/JetBrains/
