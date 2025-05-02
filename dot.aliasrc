@@ -1,0 +1,69 @@
+# Filesystem
+alias ..="cd ../"
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias o=$EDITOR
+alias vim=nvim
+alias dotf="cd $HOME/dotfiles"
+alias dotfiles="cd $HOME/dotfiles"
+
+## Shell
+alias ls='ls --color=auto'
+alias ll='ls -l --block-size=KB'
+alias la='ls -A'
+alias lal='ls -l -A --block-size=KB'
+alias tmux='tmuxx'
+alias lsof-listen='lsof -i -P | grep "LISTEN"'
+alias reload-shell='exec $SHELL -l'
+## Git
+alias g='git'
+alias a='add-git-files'
+alias d='git diff'
+alias s='git status'
+alias st='git status -s'
+alias gm= 'git co master'
+alias ga='git add -A'
+alias gg='git grep'
+alias r='restore-git-files' # hide 'r' which is zsh's built-in command
+alias t='tmux'
+alias reload='source $HOME/.zshrc && exec $SHELL'
+## Node
+alias pn='pnpm'
+alias pm='pnpm'
+## rc
+alias vimrc='vi ~/.vimrc'
+alias zshrc='vi ~/.zshrc'
+alias tmuxrc='vi ~/.tmux.conf'
+## History
+alias zshlog='vi ~/.zsh_history'
+# Directories
+
+autoload zmv
+alias zmv='noglob zmv -W'
+alias zcp='noglob zmv -C'
+alias zln='noglob zmv -L'
+alias zsy='noglob zmv -Ls'
+
+if type go > /dev/null; then
+  alias go-get='GO111MODULE=off go get -u'
+  alias go-build-all='go test -run=^$ ./... 1>/dev/null'
+fi
+
+if type docker > /dev/null; then
+  alias docker-rm-all='docker rm $(docker ps -a -q)'
+  alias docker-rmi-all='docker rmi $(docker images -q)'
+  alias docker-run-sh='docker run -it --entrypoint sh'
+fi
+
+if type bazelisk > /dev/null; then
+  alias bazel='bazelisk'
+fi
+
+if type ibazel > /dev/null; then
+  alias ibazel-go-test='ibazel --run_output_interactive=false -nolive_reload test :go_default_test'
+fi
+
+if type bat > /dev/null; then
+  alias cat='bat'
+fi
+

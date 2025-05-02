@@ -1,5 +1,15 @@
 # Amazon Q pre block. Keep at the top of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
+# Rcs --------------------------------------------------------------------
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
+# Aliases ----------------------------------------------------------------------
+
+[ -f "$HOME/.aliasrc" ] && source "$HOME/.aliasrc"
+
+if [ -f $HOME/.aliasrc.local ]; then
+  source $HOME/.aliasrc.local
+fi
 
 # Path -------------------------------------------------------------------
 export TERM=xterm-256color
@@ -25,11 +35,17 @@ fi
 
 zstyle ':completion:*:*:make:*' tag-order 'targets'
 
+
+# Homebrew のパスを定義（Apple Siliconの場合）
+export BREW_PREFIX="/opt/homebrew"
+
+# Completion path 設定
 if [ -d $BREW_PREFIX/share/zsh/zsh-completions ]; then
   FPATH=$BREW_PREFIX/share/zsh/zsh-completions:$FPATH
 fi
 
-if [ -d $BREW_PREFIX/share/zsh/site-functions ]; then
+# _brew_servicesが存在する場合のみ追加
+if [ -f $BREW_PREFIX/share/zsh/site-functions/_brew_services ]; then
   FPATH=$BREW_PREFIX/share/zsh/site-functions:$FPATH
 fi
 
@@ -307,65 +323,6 @@ function count() {
   echo -n "${1-.}" | wc -m
 }
 
-# Aliases ----------------------------------------------------------------------
-## Shell
-alias ls='ls --color=auto'
-alias ll='ls -l --block-size=KB'
-alias la='ls -A'
-alias lal='ls -l -A --block-size=KB'
-alias tmux='tmuxx'
-alias lsof-listen='lsof -i -P | grep "LISTEN"'
-alias reload-shell='exec $SHELL -l'
-alias dotfiles='cd ~/dotfiles'
-## Git
-alias g= 'git'
-alias a='add-git-files'
-alias d='git diff'
-alias s='git status'
-alias st='git status -s'
-alias gm= 'git co master'
-alias ga='git add -A'
-alias gg='git grep'
-alias r='restore-git-files' # hide 'r' which is zsh's built-in command
-alias t='tmux'
-alias reload='source ~/.zshrc && exec $SHELL'
-## Node
-alias pn='pnpm'
-alias pm='pnpm'
-## rc
-alias vimrc='vi ~/.vimrc'
-alias zshrc='vi ~/.zshrc'
-alias tmuxrc='vi ~/.tmux.conf'
-
-autoload zmv
-alias zmv='noglob zmv -W'
-alias zcp='noglob zmv -C'
-alias zln='noglob zmv -L'
-alias zsy='noglob zmv -Ls'
-
-if type go > /dev/null; then
-  alias go-get='GO111MODULE=off go get -u'
-  alias go-build-all='go test -run=^$ ./... 1>/dev/null'
-fi
-
-if type docker > /dev/null; then
-  alias docker-rm-all='docker rm $(docker ps -a -q)'
-  alias docker-rmi-all='docker rmi $(docker images -q)'
-  alias docker-run-sh='docker run -it --entrypoint sh'
-fi
-
-if type bazelisk > /dev/null; then
-  alias bazel='bazelisk'
-fi
-
-if type ibazel > /dev/null; then
-  alias ibazel-go-test='ibazel --run_output_interactive=false -nolive_reload test :go_default_test'
-fi
-
-if type bat > /dev/null; then
-  alias cat='bat'
-fi
-
 # Prompt -----------------------------------------------------------------------
 
 autoload -Uz vcs_info
@@ -516,9 +473,6 @@ typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 eval "$(gh copilot alias -- zsh)"
 
 
-# Amazon Q post block. Keep at the bottom of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
-
 # pnpm
 export PNPM_HOME="/Users/yoshi/Library/pnpm"
 case ":$PATH:" in
@@ -526,3 +480,6 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# Amazon Q post block. Keep at the bottom of this file.
+[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
