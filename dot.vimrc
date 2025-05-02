@@ -29,6 +29,9 @@ call plug#begin('~/.vim/plugged')
 " Color scheme
 Plug 'chriskempson/base16-vim'
 
+" Dashboard
+Plug 'nvimdev/dashboard-nvim'
+
 " Syntax highlight
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'mustache/vim-mustache-handlebars'
@@ -84,7 +87,7 @@ Plug 'vim-scripts/taglist.vim'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-surround'
 Plug 'thinca/vim-poslist'
-Plug 'thinca/vim-splash'
+" Plug 'thinca/vim-splash'
 Plug 'vim-scripts/matchit.zip'
 Plug 'thinca/vim-singleton'
 Plug 'thinca/vim-localrc'
@@ -152,7 +155,7 @@ set hidden                     " 編集中でも他のファイルを開ける�
 set backspace=indent,eol,start " バックスペースでなんでも消せるように
 set formatoptions=lmoq         " テキスト整形オプション，マルチバイト系を追加
 set vb t_vb=                   " ビープをならさない
-set browsedir=buffer           " Exploreの初期ディレクトリ
+" set browsedir=buffer           " Exploreの初期ディレクトリ
 set whichwrap=b,s,h,l,<,>,[,]  " カーソルを行頭、行末で止まらないようにする
 set showcmd                    " コマンドをステータス行に表示
 set magic                      " 正規表現に使われる記号を有効にする
@@ -675,6 +678,25 @@ function! s:setup_netrw()
   nnoremap <buffer> qq :q<CR>
 endfunction
 "------------------------------------------------------------------------------
+
+" dashboard-nvim
+lua << EOF
+require('dashboard').setup {
+  theme = 'hyper', -- ← これが「Hyper」テーマ指定
+  config = {
+    week_header = {
+      enable = true,
+    },
+    shortcut = {
+      { desc = '󰊳 Update', group = '@property', action = 'Lazy update', key = 'u' },
+      { desc = ' Files', group = 'Label', action = 'Telescope find_files', key = 'f' },
+      { desc = '󰈚 Recent', group = 'Label', action = 'Telescope oldfiles', key = 'r' },
+      { desc = '󰒲 Config', group = 'Number', action = 'edit ~/.config/nvim/init.lua', key = 'c' },
+      { desc = ' dotfiles', group = 'Number', action = 'Telescope dotfiles', key = 'd' },
+    },
+  }
+}
+EOF
 
 " nvim-treesitter
 lua <<EOF
