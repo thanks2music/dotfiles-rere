@@ -473,6 +473,8 @@ typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 # for GitHub Copilod
 eval "$(gh copilot alias -- zsh)"
 
+# zoxide
+eval "$(zoxide init zsh)"
 
 # pnpm
 export PNPM_HOME="/Users/yoshi/Library/pnpm"
