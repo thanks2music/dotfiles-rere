@@ -1,4 +1,5 @@
 .DS_Store
+*.local
 Brewfile.lock.json
 dot.vim/autoload/plug.vim
 dot.vim/plugged/
