@@ -442,6 +442,7 @@ function chpwd() { ls }
 
 # ディレクトリ名だけで､ディレクトリの移動をする｡
 setopt auto_cd
+cdpath=($HOME/work/dev/my-projects $HOME/work/dev/learning/monorepos)
 
 # C-s, C-qを無効にする。
 setopt no_flow_control
