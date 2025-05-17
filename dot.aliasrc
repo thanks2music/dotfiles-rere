@@ -3,6 +3,7 @@ alias ..="cd ../"
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias o=$EDITOR
+alias vi=nvim
 alias vim=nvim
 alias dotf="cd $HOME/dotfiles"
 alias dotfiles="cd $HOME/dotfiles"
@@ -27,6 +28,9 @@ alias gg='git grep'
 alias r='restore-git-files' # hide 'r' which is zsh's built-in command
 alias t='tmux'
 alias reload='source $HOME/.zshrc && exec $SHELL'
+## Cloud/AWS
+alias aws-t2m="export AWS_PROFILE=default && echo 'Switched to personal AWS account'"
+alias aws-t4v="export AWS_PROFILE=thanks4ven && echo 'Switched to company AWS account'"
 ## Node
 alias pn='pnpm'
 alias pm='pnpm'

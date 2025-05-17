@@ -12,5 +12,7 @@ java temurin-jre-22.0.1+8
 ruby 3.3.1
 python 3.12.3
 golang 1.22.3
-pnpm 9.7.0
+pnpm 10.11.0
 php 8.3.12
+bun 1.2.13
+rust 1.87.0
