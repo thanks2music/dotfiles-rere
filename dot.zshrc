@@ -11,6 +11,9 @@ if [ -f $HOME/.aliasrc.local ]; then
   source $HOME/.aliasrc.local
 fi
 
+## Cloud Alias
+[ -f "$HOME/.cloudrc" ] && source "$HOME/.cloudrc"
+
 # Path -------------------------------------------------------------------
 export TERM=xterm-256color
 export LANG=ja_JP.UTF-8
@@ -107,6 +110,9 @@ if type fzf > /dev/null; then
     --bind=ctrl-d:half-page-down"
   export FZF_DEFAULT_COMMAND="rg --files --hidden -g '!.git' --sort path"
 fi
+
+# VS Code ----------------------------------------------------------------------
+[[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
 
 # Powerlevel10k ----------------------------------------------------------------
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
