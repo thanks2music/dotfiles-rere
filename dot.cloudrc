@@ -1,6 +1,8 @@
 # AWS
-alias aws-t2m="export AWS_PROFILE=default && echo 'Switched to personal AWS account'"
-alias aws-t4v="export AWS_PROFILE=thanks4ven && echo 'Switched to company AWS account'"
+alias aws-t2m="export AWS_PROFILE=thanks2music && echo 'Switched to thanks2music AWS account'"
+alias aws-t4v="export AWS_PROFILE=thanks4ven && echo 'Switched to thanks4ven AWS account'"
+alias aws-tokyo="aws --region ap-northeast-1"
+alias aws-us="aws --region us-east-1"
 
 # Google Cloud
 alias gcloud-default="gcloud config configurations activate default && echo '🔄 切り替え完了: Google Cloud デフォルトアカウント'"
