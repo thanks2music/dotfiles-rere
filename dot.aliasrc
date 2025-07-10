@@ -10,7 +10,7 @@ alias dotfiles="cd $HOME/dotfiles"
 
 ## Shell
 alias ls='ls --color=auto'
-alias ll='ls -l --block-size=KB'
+alias ll='ls -la --block-size=KB'
 alias la='ls -A'
 alias lal='ls -l -A --block-size=KB'
 alias tmux='tmuxx'
