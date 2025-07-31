@@ -16,6 +16,7 @@ alias lal='ls -l -A --block-size=KB'
 alias tmux='tmuxx'
 alias lsof-listen='lsof -i -P | grep "LISTEN"'
 alias reload-shell='exec $SHELL -l'
+
 ## Git
 alias g='git'
 alias a='add-git-files'
@@ -25,20 +26,28 @@ alias st='git status -s'
 alias gm= 'git co master'
 alias ga='git add -A'
 alias gg='git grep'
+alias git-tags-top10='git for-each-ref --sort=-creatordate --format="%(refname:short)" refs/tags | head -n 10'
 alias r='restore-git-files' # hide 'r' which is zsh's built-in command
 alias t='tmux'
 alias reload='source $HOME/.zshrc && exec $SHELL'
+
+## AI
+alias claude-cost='bunx ccusage'
+
 ## Node
 alias pn='pnpm'
 alias pm='pnpm'
+
 ## rc
 alias vimrc='vi ~/.vimrc'
 alias zshrc='vi ~/.zshrc'
+alias cloudrc='vi ~/.cloudrc'
+alias aliasrc='vi ~/.aliasrc'
 alias tmuxrc='vi ~/.tmux.conf'
 ## History
 alias zshlog='vi ~/.zsh_history'
-# Directories
 
+# Directories
 autoload zmv
 alias zmv='noglob zmv -W'
 alias zcp='noglob zmv -C'

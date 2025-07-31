@@ -9,3 +9,4 @@ alias gcloud-default="gcloud config configurations activate default && echo '�
 alias gcloud-personal="gcloud config configurations activate personal && echo '🔄 切り替え完了: Google Cloud 個人アカウント'"
 alias gcloud-company="gcloud config configurations activate company && echo '🔄 切り替え完了: Google Cloud 仕事用アカウント'"
 alias gcloud-current="gcloud config configurations list --filter='is_active=true' --format='value(name)' | xargs echo '現在のアカウント:'"
+

@@ -14,6 +14,10 @@ fi
 ## Cloud Alias
 [ -f "$HOME/.cloudrc" ] && source "$HOME/.cloudrc"
 
+if [ -f $HOME/.cloudrc.local ]; then
+  source $HOME/.cloudrc.local
+fi
+
 # Path -------------------------------------------------------------------
 export TERM=xterm-256color
 export LANG=ja_JP.UTF-8
