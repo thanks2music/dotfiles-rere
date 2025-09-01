@@ -23,7 +23,6 @@ export TERM=xterm-256color
 export LANG=ja_JP.UTF-8
 export XDG_CONFIG_HOME=$HOME/.config
 export LS_COLORS='di=01;36'
-
 export GOPATH=$HOME/code
 export GO15VENDOREXPERIMENT=1
 export GO111MODULE=on
@@ -60,6 +59,7 @@ autoload -Uz compinit
 compinit
 
 # Envs -------------------------------------------------------------------------
+## Homebrew
 export PATH="$PATH:/opt/homebrew/bin/"
 export PATH=$HOME/bin:$BREW_PREFIX/bin:$BREW_PREFIX/sbin:$GOPATH/bin:$PATH
 export MANPATH=$BREW_PREFIX/share/man:$BREW_PREFIX/man:/usr/share/man
@@ -83,6 +83,7 @@ if [ -d $BREW_PREFIX/Caskroom/google-cloud-sdk ]; then
   source "$BREW_PREFIX/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
 fi
 
+## anyenv
 if [ -d ${HOME}/.anyenv ] ; then
   export PATH="$HOME/.anyenv/bin:$PATH"
   eval "$(anyenv init -)"
@@ -114,6 +115,13 @@ if type fzf > /dev/null; then
     --bind=ctrl-d:half-page-down"
   export FZF_DEFAULT_COMMAND="rg --files --hidden -g '!.git' --sort path"
 fi
+
+
+## Mysql
+export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
+export LDFLAGS="-L/opt/homebrew/opt/mysql-client/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/mysql-client/include"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/mysql-client/lib/pkgconfig"
 
 # VS Code ----------------------------------------------------------------------
 [[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"

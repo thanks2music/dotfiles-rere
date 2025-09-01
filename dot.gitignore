@@ -9,6 +9,9 @@ tags
 *.cache
 *.idea
 *.clinerules/
+*.claude
+*.MWebMetaData
+**/CLAUDE.md
 *ignored_memo.md
 _ignored/
 _ignored.meta

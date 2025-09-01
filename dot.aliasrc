@@ -44,6 +44,7 @@ alias zshrc='vi ~/.zshrc'
 alias cloudrc='vi ~/.cloudrc'
 alias aliasrc='vi ~/.aliasrc'
 alias tmuxrc='vi ~/.tmux.conf'
+alias sshrc='vi ~/.ssh/config'
 ## History
 alias zshlog='vi ~/.zsh_history'
 

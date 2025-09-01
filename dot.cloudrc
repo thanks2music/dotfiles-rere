@@ -7,6 +7,7 @@ alias aws-us="aws --region us-east-1"
 # Google Cloud
 alias gcloud-default="gcloud config configurations activate default && echo '🔄 切り替え完了: Google Cloud デフォルトアカウント'"
 alias gcloud-personal="gcloud config configurations activate personal && echo '🔄 切り替え完了: Google Cloud 個人アカウント'"
+alias gcloud-thanks4ven="gcloud config configurations activate thanks4ven && echo '🔄 切り替え完了: Google Cloud 個人事業用アカウント'"
 alias gcloud-company="gcloud config configurations activate company && echo '🔄 切り替え完了: Google Cloud 仕事用アカウント'"
 alias gcloud-current="gcloud config configurations list --filter='is_active=true' --format='value(name)' | xargs echo '現在のアカウント:'"
 
