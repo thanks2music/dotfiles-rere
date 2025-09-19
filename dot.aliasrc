@@ -13,7 +13,6 @@ alias ls='ls --color=auto'
 alias ll='ls -la --block-size=KB'
 alias la='ls -A'
 alias lal='ls -l -A --block-size=KB'
-alias tmux='tmuxx'
 alias lsof-listen='lsof -i -P | grep "LISTEN"'
 alias reload-shell='exec $SHELL -l'
 
@@ -29,6 +28,18 @@ alias gg='git grep'
 alias git-tags-top10='git for-each-ref --sort=-creatordate --format="%(refname:short)" refs/tags | head -n 10'
 alias r='restore-git-files' # hide 'r' which is zsh's built-in command
 alias t='tmux'
+# 新しいセッションを作成
+alias tn='tmux new -s'
+# セッションをKill
+alias tk='tmux kill-session -t'
+# セッションに attach（無ければ引数に指定した名前でセッション）
+alias ta='(){ tmux attach -t "$1" 2>/dev/null || tmux new -s "$1"; }'
+# セッションに attach (無ければ新しいセッション作成)
+alias tan='tmux attach || tmux new -s'
+# デタッチ（セッションを残して離脱）
+alias td='tmux detach'
+# セッション一覧
+alias tls='tmux ls'
 alias reload='source $HOME/.zshrc && exec $SHELL'
 
 ## AI
