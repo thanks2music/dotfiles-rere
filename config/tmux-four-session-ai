@@ -1,0 +1,9 @@
+# 左: Claude
+send-keys -t 0 'claude' C-m
+
+# 右: Gemini
+split-window -h -t 0 -c '#{pane_current_path}' 'gemini'
+
+# レイアウト整形 (even-horizontalで横分割に調整)
+select-layout even-horizontal
+select-pane -t 0
