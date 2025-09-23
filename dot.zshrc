@@ -11,11 +11,18 @@ if [ -f $HOME/.aliasrc.local ]; then
   source $HOME/.aliasrc.local
 fi
 
-## Cloud Alias
+## Cloud
 [ -f "$HOME/.cloudrc" ] && source "$HOME/.cloudrc"
 
 if [ -f $HOME/.cloudrc.local ]; then
   source $HOME/.cloudrc.local
+fi
+
+# AI
+[ -f "$HOME/.airc" ] && source "$HOME/.airc"
+## for LLM API
+if [ -f $HOME/.airc.local ]; then
+  source $HOME/.airc.local
 fi
 
 # Path -------------------------------------------------------------------
