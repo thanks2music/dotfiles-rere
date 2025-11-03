@@ -8,7 +8,7 @@ alias vim=nvim
 alias dotf="cd $HOME/dotfiles"
 alias dotfiles="cd $HOME/dotfiles"
 
-## Shell
+# Shell
 alias ls='ls --color=auto'
 alias ll='ls -la --block-size=KB'
 alias la='ls -A'
@@ -16,7 +16,7 @@ alias lal='ls -l -A --block-size=KB'
 alias lsof-listen='lsof -i -P | grep "LISTEN"'
 alias reload-shell='exec $SHELL -l'
 
-## Git
+# Git
 alias g='git'
 alias a='add-git-files'
 alias d='git diff'
@@ -27,35 +27,51 @@ alias ga='git add -A'
 alias gg='git grep'
 alias git-tags-top10='git for-each-ref --sort=-creatordate --format="%(refname:short)" refs/tags | head -n 10'
 alias r='restore-git-files' # hide 'r' which is zsh's built-in command
+
+# Tmux
 alias t='tmux'
-# 新しいセッションを作成
+## 新しいセッションを作成
 alias tn='tmux new -s'
-# セッションをKill
+## セッションをKill
 alias tk='tmux kill-session -t'
-# セッションに attach（無ければ引数に指定した名前でセッション）
+## セッションに attach（無ければ引数に指定した名前でセッション）
 alias ta='(){ tmux attach -t "$1" 2>/dev/null || tmux new -s "$1"; }'
-# セッションに attach (無ければ新しいセッション作成)
+## セッションに attach (無ければ新しいセッション作成)
 alias tan='tmux attach || tmux new -s'
-# デタッチ（セッションを残して離脱）
+## デタッチ（セッションを残して離脱）
 alias td='tmux detach'
-# セッション一覧
+## セッション一覧
 alias tls='tmux ls'
 alias reload='source $HOME/.zshrc && exec $SHELL'
 
-## AI
+# LLM CLI
+
+## Claude
+### 使用量確認
 alias claude-cost='bunx ccusage'
 
-## Node
+### セッションID検索
+alias claude-search-sessionid='grep -i "$1" ~/.claude/history.jsonl | jq -r ".sessionId" | sort -u'
+
+### セッションIDと日時と内容を表示
+claude-find() {
+  grep -i "$1" ~/.claude/history.jsonl | jq -r '[.sessionId, (.timestamp/1000 | strftime("%Y-%m-%d %H:%M")),
+.display[:80]] | join(" | ")'
+}
+
+# Node
 alias pn='pnpm'
 alias pm='pnpm'
 
-## rc
+# rcs
 alias vimrc='vi ~/.vimrc'
 alias zshrc='vi ~/.zshrc'
 alias cloudrc='vi ~/.cloudrc'
 alias aliasrc='vi ~/.aliasrc'
 alias tmuxrc='vi ~/.tmux.conf'
 alias sshrc='vi ~/.ssh/config'
+
+# Terminal
 ## History
 alias zshlog='vi ~/.zsh_history'
 
