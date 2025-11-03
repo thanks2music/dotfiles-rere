@@ -12,6 +12,9 @@ tags
 *.claude
 *.MWebMetaData
 **/CLAUDE.md
+**/AGENTS.md
+**/GEMINI.md
+**/CLAUDE.*.md
 *ignored_memo.md
 _ignored/
 _ignored.meta
@@ -24,3 +27,5 @@ node_modules/
 */AssetCaches/
 */Assets/Editor/JetBrains/
 */Assets/Editor/JetBrains.meta
+
+**/reference/*

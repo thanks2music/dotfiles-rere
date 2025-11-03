@@ -156,6 +156,12 @@ fi
 ## for GO
 . ~/.asdf/plugins/golang/set-env.zsh
 
+# pnpm Global Packages Priority -----------------------------------------------
+# asdf で管理している Node.js 環境でも pnpm のグローバルパッケージを優先
+# asdf shim より前に配置することで、vercel などの CLI ツールが正しく解決される
+export PNPM_HOME="/Users/yoshi/Library/pnpm"
+export PATH="$PNPM_HOME:$PATH"
+
 # Nix --------------------------------------------------------------------------
 
 if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then
@@ -501,13 +507,8 @@ eval "$(gh copilot alias -- zsh)"
 # zoxide
 eval "$(zoxide init zsh)"
 
-# pnpm
-export PNPM_HOME="/Users/yoshi/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
-
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+
+# bun completions
+[ -s "/Users/yoshi/.bun/_bun" ] && source "/Users/yoshi/.bun/_bun"
