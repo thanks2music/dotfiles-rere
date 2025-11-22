@@ -47,11 +47,16 @@ alias reload='source $HOME/.zshrc && exec $SHELL'
 # LLM CLI
 
 ## Claude
+alias cl='claude'
 ### 使用量確認
 alias claude-cost='bunx ccusage'
 
 ### セッションID検索
-alias claude-search-sessionid='grep -i "$1" ~/.claude/history.jsonl | jq -r ".sessionId" | sort -u'
+claude-search-sessionid() {
+  grep -i "$1" ~/.claude/history.jsonl | jq -r '.sessionId' | sort -u
+}
+
+alias csid='claude-search-sessionid'
 
 ### セッションIDと日時と内容を表示
 claude-find() {
