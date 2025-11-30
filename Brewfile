@@ -3,7 +3,6 @@ tap "golangci/tap"
 tap "harelba/q"
 tap "homebrew/bundle"
 tap "homebrew/services"
-tap "shivammathur/php"
 tap "stripe/stripe-cli"
 # Search tool like grep, but optimized for programmers
 brew "ack"
@@ -371,8 +370,6 @@ cask "qblocker"
 cask "sip"
 # Screen capture tool with mark up and sharing features
 cask "skitch"
-# Video chat, voice call and instant messaging application
-cask "skype"
 # Team communication and collaboration software
 cask "slack"
 # Video game digital distribution service
