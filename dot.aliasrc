@@ -48,6 +48,7 @@ alias reload='source $HOME/.zshrc && exec $SHELL'
 
 ## Claude
 alias cl='claude'
+alias clr='claude --resume'
 ### 使用量確認
 alias claude-cost='bunx ccusage'
 
