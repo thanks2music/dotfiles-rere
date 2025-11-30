@@ -15,6 +15,9 @@ tags
 **/AGENTS.md
 **/GEMINI.md
 **/CLAUDE.*.md
+**/notes/**
+**/private/**
+**/reference/**
 *ignored_memo.md
 _ignored/
 _ignored.meta
