@@ -131,7 +131,7 @@ export CPPFLAGS="-I/opt/homebrew/opt/mysql-client/include"
 export PKG_CONFIG_PATH="/opt/homebrew/opt/mysql-client/lib/pkgconfig"
 
 # VS Code ----------------------------------------------------------------------
-[[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
+[[ "$TERM_PROGRAM" == "vscode" ]] && type code > /dev/null 2>&1 && . "$(code --locate-shell-integration-path zsh)"
 
 # Powerlevel10k ----------------------------------------------------------------
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
@@ -143,18 +143,16 @@ export DIR_HOME="/Users/yoshi/Dropbox"
 
 # asdf -------------------------------------------------------------------------
 ## Git Ver
-. "$HOME/.asdf/asdf.sh"
+[ -f "$HOME/.asdf/asdf.sh" ] && . "$HOME/.asdf/asdf.sh"
 
 ## Brew Ver
-if [ -e $BREW_PREFIX/opt/asdf/libexec/asdf.sh ]; then
-  . $BREW_PREFIX/opt/asdf/libexec/asdf.sh
-fi
+[ -f "$BREW_PREFIX/opt/asdf/libexec/asdf.sh" ] && . "$BREW_PREFIX/opt/asdf/libexec/asdf.sh"
 
 ## for Java
-. ~/.asdf/plugins/java/set-java-home.zsh
+[ -f ~/.asdf/plugins/java/set-java-home.zsh ] && . ~/.asdf/plugins/java/set-java-home.zsh
 
 ## for GO
-. ~/.asdf/plugins/golang/set-env.zsh
+[ -f ~/.asdf/plugins/golang/set-env.zsh ] && . ~/.asdf/plugins/golang/set-env.zsh
 
 ## pnpm
 # Global Packages Priority -----------------------------------------------
@@ -370,7 +368,7 @@ zstyle ':vcs_info:*' actionformats '%b|%a'
 PREEXEC_START_TIME=`date +%s`
 
 function preexec {
-  PREEXEC_START_TIME=`date +%s`jjj
+  PREEXEC_START_TIME=`date +%s`
 }
 
 ## コマンド補完
@@ -499,20 +497,20 @@ ulimit -u 2000
 typeset -U path PATH # Remove duplicated PATHs.
 
 # direnv -----------------------------------------------------------------------
-if type direnv > /dev/null; then
+if type direnv > /dev/null 2>&1; then
   eval "$(direnv hook zsh)"
 fi
-source ~/.config/powerlevel10k/powerlevel10k.zsh-theme
+[ -f ~/.config/powerlevel10k/powerlevel10k.zsh-theme ] && source ~/.config/powerlevel10k/powerlevel10k.zsh-theme
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 
-# for GitHub Copilod
-eval "$(gh copilot alias -- zsh)"
+# for GitHub Copilot
+type gh > /dev/null 2>&1 && eval "$(gh copilot alias -- zsh)"
 
 # zoxide
-eval "$(zoxide init zsh)"
+type zoxide > /dev/null 2>&1 && eval "$(zoxide init zsh)"
 
 # Kiro CLI post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
