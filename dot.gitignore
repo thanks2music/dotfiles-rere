@@ -8,13 +8,14 @@ tags
 *.userprefs
 *.cache
 *.idea
-*.clinerules/
-*.claude
+# *.clinerules/
+# *.claude
 *.MWebMetaData
 **/CLAUDE.md
 **/AGENTS.md
 **/GEMINI.md
 **/CLAUDE.*.md
+**/DEVELOPMENT.md
 **/notes/**
 **/private/**
 **/reference/**

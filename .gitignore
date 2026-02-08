@@ -10,3 +10,9 @@ dot.vim/view
 dot.vim/undo
 
 apps
+
+# Spec-Driven Development
+docs/approach
+docs/reading-queue
+docs/report 
+docs/review
