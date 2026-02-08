@@ -474,7 +474,12 @@ WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # cd をしたときにlsを実行する
-function chpwd() { ls }
+# 対話的シェルかつTTY出力の場合のみ実行（コマンド置換やスクリプトで汚染しない）
+function chpwd() {
+  if [[ $- == *i* && -t 1 ]]; then
+    ls > /dev/tty
+  fi
+}
 
 # ディレクトリ名だけで､ディレクトリの移動をする｡
 setopt auto_cd
@@ -507,7 +512,8 @@ fi
 typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 
 # for GitHub Copilot
-type gh > /dev/null 2>&1 && eval "$(gh copilot alias -- zsh)"
+# Note: GitHub Copilot CLI v0.0.406+ no longer uses alias setup
+# Use `gh copilot` or `copilot` commands directly
 
 # zoxide
 type zoxide > /dev/null 2>&1 && eval "$(zoxide init zsh)"
