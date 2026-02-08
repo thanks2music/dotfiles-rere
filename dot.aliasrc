@@ -57,6 +57,10 @@ claude-search-sessionid() {
   grep -i "$1" ~/.claude/history.jsonl | jq -r '.sessionId' | sort -u
 }
 
+claude-search-sessionid-verbose() {
+  grep -i "$1" ~/.claude/history.jsonl | jq -r '[.sessionId, ((.timestamp / 1000 + 32400) | strftime("%Y-%m-%d %H:%M:%S JST"))] | @tsv' | sort -t$'\t' -k2 -r | uniq | head -5
+}
+
 alias csid='claude-search-sessionid'
 
 ### セッションIDと日時と内容を表示
