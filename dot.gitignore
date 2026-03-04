@@ -9,7 +9,6 @@ tags
 *.cache
 *.idea
 # *.clinerules/
-# *.claude
 *.MWebMetaData
 **/CLAUDE.md
 **/AGENTS.md
