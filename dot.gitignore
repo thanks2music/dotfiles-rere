@@ -10,6 +10,7 @@ tags
 *.idea
 # *.clinerules/
 *.MWebMetaData
+.claude/*.local.json
 **/CLAUDE.md
 **/AGENTS.md
 **/GEMINI.md
