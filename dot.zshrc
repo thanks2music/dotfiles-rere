@@ -141,25 +141,24 @@ fi
 # # for Alfred
 export DIR_HOME="/Users/yoshi/Dropbox"
 
-# asdf -------------------------------------------------------------------------
-## Git Ver
-[ -f "$HOME/.asdf/asdf.sh" ] && . "$HOME/.asdf/asdf.sh"
+## pnpm
+# Global Packages Priority -----------------------------------------------
+# asdf init より前に配置することで、asdf shims が後から PATH 先頭に追加され
+# asdf で管理するランタイム（Node.js等）が pnpm より優先される。
+# pnpm グローバルツール（vercel等）は asdf 未管理のため引き続き参照可能。
+export PNPM_HOME="/Users/yoshi/Library/pnpm"
+export PATH="$PNPM_HOME:$PATH"
 
-## Brew Ver
-[ -f "$BREW_PREFIX/opt/asdf/libexec/asdf.sh" ] && . "$BREW_PREFIX/opt/asdf/libexec/asdf.sh"
+# asdf -------------------------------------------------------------------------
+# v0.16+ (Go binary): source ではなく PATH に shims を追加するだけでよい
+export ASDF_DATA_DIR="$HOME/.asdf"
+export PATH="$ASDF_DATA_DIR/shims:$PATH"
 
 ## for Java
 [ -f ~/.asdf/plugins/java/set-java-home.zsh ] && . ~/.asdf/plugins/java/set-java-home.zsh
 
 ## for GO
 [ -f ~/.asdf/plugins/golang/set-env.zsh ] && . ~/.asdf/plugins/golang/set-env.zsh
-
-## pnpm
-# Global Packages Priority -----------------------------------------------
-# asdf で管理している Node.js 環境でも pnpm のグローバルパッケージを優先
-# asdf shim より前に配置することで、vercel などの CLI ツールが正しく解決される
-export PNPM_HOME="/Users/yoshi/Library/pnpm"
-export PATH="$PNPM_HOME:$PATH"
 
 # bun
 ## completions
