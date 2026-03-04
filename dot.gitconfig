@@ -122,3 +122,5 @@
   smudge = git-lfs smudge -- %f
 [init]
 	defaultBranch = main
+[includeIf "gitdir:~/work/voistock/"]
+	path = ~/.gitconfig-voistock
