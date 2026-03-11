@@ -75,6 +75,21 @@ else
 	fi
 fi
 
+topic 'Setup Claude Code settings'
+
+mkdir -p "$HOME/.claude"
+
+claude_settings_src="$dotfiles_dir/.claude/settings.json"
+claude_settings_dest="$HOME/.claude/settings.json"
+
+if [ -f "$claude_settings_dest" ] && [ ! -L "$claude_settings_dest" ]; then
+	echo "Backing up existing $claude_settings_dest -> ${claude_settings_dest}.backup"
+	mv "$claude_settings_dest" "${claude_settings_dest}.backup"
+fi
+
+echo "Linking $claude_settings_src -> $claude_settings_dest"
+ln -sf "$claude_settings_src" "$claude_settings_dest"
+
 topic 'Setup Homebrew'
 
 if [ `uname` = "Darwin" ]; then
