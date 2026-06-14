@@ -1,0 +1,7 @@
+# uv user-level configuration
+# https://docs.astral.sh/uv/concepts/python-versions/
+#
+# PATH 上の Python (asdf shims) を uv-managed Python より優先する。
+# これにより uvx / uv python find のデフォルトが asdf の global バージョンに追従する。
+# (デフォルトの "managed" だと uv-managed 3.10.19 が常に選ばれてしまうため変更)
+python-preference = "system"
