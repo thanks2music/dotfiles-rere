@@ -77,20 +77,8 @@ else
 	fi
 fi
 
-topic 'Setup Claude Code settings'
-
-mkdir -p "$HOME/.claude"
-
-claude_settings_src="$dotfiles_dir/.claude/settings.json"
-claude_settings_dest="$HOME/.claude/settings.json"
-
-if [ -f "$claude_settings_dest" ] && [ ! -L "$claude_settings_dest" ]; then
-	echo "Backing up existing $claude_settings_dest -> ${claude_settings_dest}.backup"
-	mv "$claude_settings_dest" "${claude_settings_dest}.backup"
-fi
-
-echo "Linking $claude_settings_src -> $claude_settings_dest"
-ln -sf "$claude_settings_src" "$claude_settings_dest"
+# NOTE: ~/.claude (CLAUDE.md / companions / settings / secrets) は private リポ avengers が管理。
+#       本 setup.sh 末尾の 'Setup avengers' で bootstrap.sh を呼び復元する（dotfiles からは扱わない）。
 
 topic 'Setup Zed settings'
 
@@ -118,4 +106,27 @@ if [ `uname` = "Darwin" ]; then
 	fi
 else
 	echo 'This environment does not need Homebrew'
+fi
+
+topic 'Setup avengers (private AI config: ~/.claude rules / settings / secrets)'
+
+avengers_dir="$HOME/work/dev/my-projects/avengers"
+avengers_repo="git@github.com:thanks2music/avengers.git"
+
+if [ ! -d "$avengers_dir" ]; then
+	if command -v git > /dev/null 2>&1; then
+		echo "Cloning avengers (private) -> $avengers_dir"
+		mkdir -p "$(dirname "$avengers_dir")"
+		git clone "$avengers_repo" "$avengers_dir" || \
+			echo "  [manual] clone 失敗（SSH/GitHub 認証後に再実行）: git clone $avengers_repo $avengers_dir && bash $avengers_dir/bootstrap.sh"
+	else
+		echo "  [manual] git が無いため clone 不可。git 導入後に: git clone $avengers_repo $avengers_dir && bash $avengers_dir/bootstrap.sh"
+	fi
+fi
+
+if [ -f "$avengers_dir/bootstrap.sh" ]; then
+	echo 'Running avengers bootstrap'
+	bash "$avengers_dir/bootstrap.sh"
+else
+	echo '  [info] avengers 未配置のため bootstrap を skip（上記手順で後ほど実行）'
 fi

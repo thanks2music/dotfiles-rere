@@ -114,6 +114,10 @@ brew "git-lfs"
 brew "gnu-sed"
 # GNU Pretty Good Privacy (PGP) package
 brew "gnupg"
+# Modern, simple file encryption (gpg alternative; avengers secrets の復号鍵に使用)
+brew "age"
+# Encrypt secrets within config files for git (age backend; avengers の API キー暗号化)
+brew "sops"
 # GNU triangulated surface library
 brew "gts"
 # Library to render SVG files using Cairo
