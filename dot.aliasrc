@@ -46,11 +46,13 @@ alias reload='source $HOME/.zshrc && exec $SHELL'
 
 # LLM CLI
 
-## Claude
-alias cl='claude'
-alias clr='claude --resume'
+## Claude Code
+alias cc='claude'
+alias ccr='claude --resume'
+alias ccd='claude --dangerously-skip-permissions'
+alias ccstatusline='bunx -y ccstatusline@latest'
 ### 使用量確認
-alias claude-cost='bunx ccusage'
+alias cc-cost='bunx ccusage'
 
 ### セッションID検索
 claude-search-sessionid() {
