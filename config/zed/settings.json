@@ -1,0 +1,53 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "ui_font_weight": 400.0,
+  "buffer_font_weight": 400.0,
+  "buffer_font_family": "NotoSans Nerd Font",
+  "ui_font_family": "NotoSans Nerd Font",
+  "terminal": {
+    "cursor_shape": "block",
+    "font_size": 14.0,
+    "font_weight": 300.0,
+    "font_family": "Hack Nerd Font"
+  },
+  "session": {
+    "trust_all_worktrees": true
+  },
+  "agent_servers": {
+    "claude-acp": {
+      "favorite_config_option_values": {
+        "model": [
+          "default"
+        ]
+      },
+      "default_config_options": {
+        "mode": "auto",
+        "model": "claude-opus-4-7"
+      },
+      "env": {
+        "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4-7"
+      },
+      "type": "registry"
+    }
+  },
+  "vim_mode": true,
+  "icon_theme": {
+    "mode": "light",
+    "light": "Zed (Default)",
+    "dark": "Zed (Default)"
+  },
+  "ui_font_size": 16.0,
+  "buffer_font_size": 16.0,
+  "theme": {
+    "mode": "light",
+    "light": "One Light",
+    "dark": "One Dark",
+  },
+}

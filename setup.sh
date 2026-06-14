@@ -33,7 +33,9 @@ topic 'Setup .config directory'
 
 mkdir -p $local_dotconfig_dir
 
-for src in `find $dotfiles_dir/config -maxdepth 1 -mindepth 1`; do
+# NOTE: zed is handled file-level below (only settings.json), to avoid linking
+# the whole ~/.config/zed dir which contains a runtime LMDB prompt DB.
+for src in `find $dotfiles_dir/config -maxdepth 1 -mindepth 1 | grep -v '/zed$'`; do
 	dest=$local_dotconfig_dir/`basename $src`
 	echo 'Linking' $src '->' $dest
 	ln -sfn $src $dest
@@ -89,6 +91,21 @@ fi
 
 echo "Linking $claude_settings_src -> $claude_settings_dest"
 ln -sf "$claude_settings_src" "$claude_settings_dest"
+
+topic 'Setup Zed settings'
+
+mkdir -p "$HOME/.config/zed"
+
+zed_settings_src="$dotfiles_dir/config/zed/settings.json"
+zed_settings_dest="$HOME/.config/zed/settings.json"
+
+if [ -f "$zed_settings_dest" ] && [ ! -L "$zed_settings_dest" ]; then
+	echo "Backing up existing $zed_settings_dest -> ${zed_settings_dest}.backup"
+	mv "$zed_settings_dest" "${zed_settings_dest}.backup"
+fi
+
+echo "Linking $zed_settings_src -> $zed_settings_dest"
+ln -sf "$zed_settings_src" "$zed_settings_dest"
 
 topic 'Setup Homebrew'
 
