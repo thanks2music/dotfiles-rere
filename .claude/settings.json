@@ -107,8 +107,6 @@
       "Bash(docker stop:*)",
       "Bash(docker start:*)",
       "Bash(docker restart:*)",
-      "Bash(docker rm:*)",
-      "Bash(docker rmi:*)",
       "Bash(docker-compose:*)",
       "Bash(jest:*)",
       "Bash(eslint:*)",
@@ -203,12 +201,19 @@
       "Bash(git reset --hard:*)",
       "Bash(git clean -fdx:*)",
       "Bash(git filter-branch:*)",
+      "Bash(git config *)",
+      "Bash(brew install *)",
+      "Bash(chmod 777 *)",
+      "Bash(gh repo delete:*)",
       "Bash(rm -rf /:*)",
       "Bash(rm -rf /*:*)",
       "Bash(rm -rf ~:*)",
       "Bash(sudo rm:*)",
+      "Bash(docker rm:*)",
+      "Bash(docker rmi:*)",
       "Bash(docker system prune:*)",
       "Bash(docker volume prune:*)",
+      "Bash(docker volume rm:*)",
       "Bash(docker network prune:*)"
     ]
   }
