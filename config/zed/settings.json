@@ -7,6 +7,9 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "edit_predictions": {
+    "mode": "eager"
+  },
   "ui_font_weight": 400.0,
   "buffer_font_weight": 400.0,
   "buffer_font_family": "NotoSans Nerd Font",
@@ -21,18 +24,26 @@
     "trust_all_worktrees": true
   },
   "agent_servers": {
+    "gemini": {
+      "type": "registry"
+    },
+    "codex-acp": {
+      "type": "registry"
+    },
     "claude-acp": {
       "favorite_config_option_values": {
+        "mode": [
+          "auto",
+          "plan"
+        ],
         "model": [
           "default"
         ]
       },
       "default_config_options": {
-        "mode": "auto",
-        "model": "claude-opus-4-7"
-      },
-      "env": {
-        "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4-7"
+        "fast": false,
+        "mode": "plan",
+        "model": "claude-fable-5[1m]"
       },
       "type": "registry"
     }
