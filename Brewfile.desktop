@@ -1,0 +1,34 @@
+# Brewfile.desktop — Pro 専用（重量級・据置用途）
+#
+# setup.sh は本ファイルを呼ばない。必要な時に手で:
+#   brew bundle install --file=~/dotfiles/Brewfile.desktop
+#
+# 持ち運び機（Air）には入れない。
+# BOSS 判断: mamp / local / phpstorm は前々職の遺産で現在未使用（Pro からも後日削除予定）。
+#            Xcode は Air では Command Line Tools のみ入れる。
+
+brew "ideviceinstaller"
+brew "ios-deploy"
+brew "libimobiledevice"
+brew "mingw-w64"
+brew "openvino"
+cask "adobe-creative-cloud"
+cask "aqua-voice"
+cask "blackhole-16ch"
+cask "blackhole-2ch"
+cask "chatgpt"
+cask "chatgpt-atlas"
+cask "cursor"
+cask "handbrake-app"
+cask "kiro-cli"
+cask "local"
+cask "mamp"
+cask "microsoft-edge"
+cask "minecraft"
+cask "phpstorm"
+cask "steam"
+cask "tor-browser"
+cask "vivaldi"
+cask "warp"
+cask "zen"
+mas "Xcode", id: 497799835

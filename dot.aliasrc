@@ -2,7 +2,7 @@
 alias ..="cd ../"
 alias ...="cd ../.."
 alias ....="cd ../../.."
-alias o=$EDITOR
+alias o='$EDITOR'
 alias vi=nvim
 alias vim=nvim
 alias dotf="cd $HOME/dotfiles"
@@ -10,9 +10,23 @@ alias dotfiles="cd $HOME/dotfiles"
 
 # Shell
 alias ls='ls --color=auto'
-alias ll='ls -la --block-size=KB'
 alias la='ls -A'
-alias lal='ls -l -A --block-size=KB'
+# --block-size は GNU coreutils 専用。macOS 標準の BSD ls は非対応で毎回失敗する。
+#
+# 判定は「gnubin の ls が実在するか」というファイルテストで行う。理由が 2 つある:
+#   1. PATH を見てはいけない。本ファイルは dot.zshrc の冒頭 (行 8) で source されるが
+#      gnubin が PATH に載るのは行 75 なので、この時点では coreutils が入っていても
+#      PATH からは見えず、常に BSD 側に落ちてしまう。
+#   2. `ls --block-size` を実行して判定すると毎シェル起動で 1 回 fork する (実測 2.5ms)。
+#      ファイルテストは builtin なので fork ゼロ。
+if [ -x /opt/homebrew/opt/coreutils/libexec/gnubin/ls ] \
+  || [ -x /usr/local/opt/coreutils/libexec/gnubin/ls ]; then
+  alias ll='ls -la --block-size=KB'
+  alias lal='ls -l -A --block-size=KB'
+else
+  alias ll='ls -la'
+  alias lal='ls -l -A'
+fi
 alias lsof-listen='lsof -i -P | grep "LISTEN"'
 alias reload-shell='exec $SHELL -l'
 
@@ -22,7 +36,7 @@ alias a='add-git-files'
 alias d='git diff'
 alias s='git status'
 alias st='git status -s'
-alias gm= 'git co master'
+alias gm='git co master'
 alias ga='git add -A'
 alias gg='git grep'
 alias git-tags-top10='git for-each-ref --sort=-creatordate --format="%(refname:short)" refs/tags | head -n 10'

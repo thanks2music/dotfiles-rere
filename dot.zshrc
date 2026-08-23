@@ -1,7 +1,9 @@
 # Kiro CLI pre block. Keep at the top of this file.
 [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
 # Rcs --------------------------------------------------------------------
-[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+# NOTE: ~/.zshrc.local はファイル末尾で 1 回だけ source する。以前は冒頭と末尾の
+#       2 箇所で読んでおり、PATH 追記など副作用のある行を書くと二重適用になった。
+#       上書き機構としては「末尾で最後に読む」が正しい。前方参照ゼロを確認済み。
 
 # Aliases ----------------------------------------------------------------------
 
@@ -38,19 +40,22 @@ bindkey -e
 bindkey '^]'   vi-find-next-char
 bindkey '^[^]' vi-find-prev-char
 
-if type brew > /dev/null; then
-  export BREW_PREFIX=$(brew --prefix)
-else
-  export BREW_PREFIX='/usr/local'
-fi
 
 # Completion -------------------------------------------------------------------
 
 zstyle ':completion:*:*:make:*' tag-order 'targets'
 
 
-# Homebrew のパスを定義（Apple Siliconの場合）
-export BREW_PREFIX="/opt/homebrew"
+# Homebrew の prefix。Apple Silicon は /opt/homebrew、Intel は /usr/local。
+#   NOTE: `brew --prefix` を呼ばない。毎シェル起動で約 30ms の fork になるため、
+#         ディレクトリの存在で判定する（builtin なので fork ゼロ）。
+#   以前はここより前に `brew --prefix` 版の判定があったが、本行が無条件で上書きしており
+#   dead code だった。同時に Intel 機では誤った値になっていた。
+if [ -d /opt/homebrew ]; then
+  export BREW_PREFIX="/opt/homebrew"
+else
+  export BREW_PREFIX="/usr/local"
+fi
 
 # Completion path 設定
 if [ -d $BREW_PREFIX/share/zsh/zsh-completions ]; then
@@ -90,14 +95,8 @@ if [ -d $BREW_PREFIX/Caskroom/google-cloud-sdk ]; then
   source "$BREW_PREFIX/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
 fi
 
-## anyenv
-if [ -d ${HOME}/.anyenv ] ; then
-  export PATH="$HOME/.anyenv/bin:$PATH"
-  eval "$(anyenv init -)"
-  for D in `find $HOME/.anyenv/envs -maxdepth 1 -type d`; do
-    PATH="$D/shims:$PATH"
-  done
-fi
+# NOTE: anyenv は削除した (Brewfile からも除去)。asdf の shim の上に重なって
+#       ruby / node の解決順を変えるため。バージョン管理は asdf に一本化する。
 
 if [ -d ${HOME}/.local ] ; then
   export PATH="$HOME/.local/bin:$PATH"
@@ -125,10 +124,14 @@ fi
 
 
 ## Mysql
-export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
-export LDFLAGS="-L/opt/homebrew/opt/mysql-client/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/mysql-client/include"
-export PKG_CONFIG_PATH="/opt/homebrew/opt/mysql-client/lib/pkgconfig"
+# NOTE: LDFLAGS / CPPFLAGS はグローバルに効くので、存在確認なしで export すると
+#       不在パスを指したまま asdf の ruby/python/php のソースビルドを汚染する。
+if [ -d "$BREW_PREFIX/opt/mysql-client" ]; then
+  export PATH="$BREW_PREFIX/opt/mysql-client/bin:$PATH"
+  export LDFLAGS="-L$BREW_PREFIX/opt/mysql-client/lib"
+  export CPPFLAGS="-I$BREW_PREFIX/opt/mysql-client/include"
+  export PKG_CONFIG_PATH="$BREW_PREFIX/opt/mysql-client/lib/pkgconfig"
+fi
 
 # VS Code ----------------------------------------------------------------------
 [[ "$TERM_PROGRAM" == "vscode" ]] && type code > /dev/null 2>&1 && . "$(code --locate-shell-integration-path zsh)"
@@ -138,15 +141,15 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# # for Alfred
-export DIR_HOME="/Users/yoshi/Dropbox"
+# NOTE: DIR_HOME (Alfred 用の Dropbox パス) は ~/.zshrc.local へ移した。
+#       Dropbox の配置・選択同期はマシンごとに違うため。
 
 ## pnpm
 # Global Packages Priority -----------------------------------------------
 # asdf init より前に配置することで、asdf shims が後から PATH 先頭に追加され
 # asdf で管理するランタイム（Node.js等）が pnpm より優先される。
 # pnpm グローバルツール（vercel等）は asdf 未管理のため引き続き参照可能。
-export PNPM_HOME="/Users/yoshi/Library/pnpm"
+export PNPM_HOME="$HOME/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 
 # asdf -------------------------------------------------------------------------
@@ -162,9 +165,9 @@ export PATH="$ASDF_DATA_DIR/shims:$PATH"
 
 # bun
 ## completions
-[ -s "/Users/yoshi/.bun/_bun" ] && source "/Users/yoshi/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
-export PATH="/Users/yoshi/.bun/bin:$PATH"
+[ -d "$HOME/.bun/bin" ] && export PATH="$HOME/.bun/bin:$PATH"
 
 # Nix --------------------------------------------------------------------------
 
@@ -181,14 +184,12 @@ fi
 
 # Android Studio and Android SDK -----------------------------------------------
 
-if [ -d '/Applications/Android Studio.app/Contents/jre/Contents/Home' ]; then
-  export JAVA_HOME='/Applications/Android Studio.app/Contents/jre/Contents/Home'
+# NOTE: 以前は Android Studio 同梱の JRE を優先していたが、Android Studio は Brewfile に
+#       無いため「入っている機と入っていない機で JAVA_HOME が黙って変わる」状態だった。
+#       2 台運用では差分の温床になるので openjdk に固定する。
+if [ -d "$BREW_PREFIX/opt/openjdk" ]; then
+  export JAVA_HOME="$BREW_PREFIX/opt/openjdk"
   export PATH=$JAVA_HOME/bin:$PATH
-else
-  if [ -d $BREW_PREFIX/opt/openjdk ]; then
-    export JAVA_HOME="$BREW_PREFIX/opt/openjdk"
-    export PATH=$JAVA_HOME/bin:$PATH
-  fi
 fi
 
 if [ -d "$HOME/Library/Android/sdk" ]; then
@@ -197,9 +198,8 @@ fi
 
 # rbenv ------------------------------------------------------------------------
 
-[[ -d ~/.rbenv  ]] && \
-  export PATH=${HOME}/.rbenv/bin:${PATH} && \
-  eval "$(rbenv init -)"
+# NOTE: rbenv は削除した (Brewfile からも除去)。ruby は dot.tool-versions の
+#       asdf 管理に一本化する。
 
 # for Node ------------------------------------------------------------------------
 # export VOLTA_HOME="$HOME/.volta"
@@ -490,13 +490,15 @@ setopt no_flow_control
 # コマンドライン引数のグロッビング
 setopt nonomatch
 
-# Change open files limit and user processes limit.
-# See: https://gist.github.com/tombigel/d503800a282fcadbee14b537735d202c
-ulimit -n 200000
-ulimit -u 2000
+# NOTE: 以前ここで ulimit -n 200000 / -u 2000 を設定していたが、macOS 26 の既定
+#       (soft -n 1048576 / -u 10666) より低く、実質「上限を下げる」設定だった。
+#       特に -u 2000 は asdf の並列ソースビルドで fork 枯渇を起こす。既定に任せる。
 
 # .zshrc.local -----------------------------------------------------------------
 
+# NOTE: ~/.zshrc.local はファイル末尾で 1 回だけ source する。以前は冒頭と末尾の
+#       2 箇所で読んでおり、PATH 追記など副作用のある行を書くと二重適用になった。
+#       上書き機構としては「末尾で最後に読む」が正しい。前方参照ゼロを確認済み。
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
 typeset -U path PATH # Remove duplicated PATHs.
 
@@ -504,7 +506,18 @@ typeset -U path PATH # Remove duplicated PATHs.
 if type direnv > /dev/null 2>&1; then
   eval "$(direnv hook zsh)"
 fi
-[ -f ~/.config/powerlevel10k/powerlevel10k.zsh-theme ] && source ~/.config/powerlevel10k/powerlevel10k.zsh-theme
+# powerlevel10k: brew 版 → 手動 clone の順に探す。
+#   brew の formula は $HOMEBREW_PREFIX/share/powerlevel10k/ に置く（caveats で確認）。
+#   NOTE: ここで `brew --prefix` を呼ばない。毎シェル約 30ms の fork になるため
+#         プレフィックスは直書きし、Intel 機のために /usr/local も見る。
+for _p10k_theme in \
+  /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme \
+  /usr/local/share/powerlevel10k/powerlevel10k.zsh-theme \
+  ~/.config/powerlevel10k/powerlevel10k.zsh-theme
+do
+  [ -f "$_p10k_theme" ] && source "$_p10k_theme" && break
+done
+unset _p10k_theme
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
