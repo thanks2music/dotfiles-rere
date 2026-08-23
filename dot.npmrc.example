@@ -1,4 +1,6 @@
-root = $HOME/.node_libraries
-binroot = $HOME/bin
-manroot = $HOME/share/man
-email = shiwano@gmail.com
+# ~/.npmrc — npm の設定。
+#
+# 認証トークンはここに書かず `npm login` で追記させる（平文の秘密を repo に置かない）。
+# 以前このファイルには上流 fork 元の著者のメールアドレスと npm v1 時代のキー
+# (root / binroot / manroot) が入っており、新しい Mac にそれがコピーされて
+# npm 実行ごとに Unknown user config 警告が出る状態だった。

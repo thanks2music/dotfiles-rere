@@ -1,0 +1,12 @@
+# ~/.zprofile — ログインシェルで 1 回だけ読まれる。
+#
+# ここは *.example なので setup.sh は「~/.zprofile が無い時だけ」コピーする。
+# symlink にしないのは、Kiro CLI など一部ツールが自分のブロックをこのファイルへ
+# 書き込むため（symlink だと git 作業ツリーを書き換えられてしまう）。
+#
+# IMPORTANT: brew shellenv はこのファイルが唯一の設置箇所。
+#   Homebrew の公式 installer は「このコマンドを実行してください」と表示するだけで
+#   自動追記はしない（install.sh のソースで確認済み）。手で入れた場合も同じ内容になる。
+#   これが無いとログインシェルで brew が PATH に載らない。
+
+eval "$(/opt/homebrew/bin/brew shellenv)"

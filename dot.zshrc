@@ -503,7 +503,18 @@ typeset -U path PATH # Remove duplicated PATHs.
 if type direnv > /dev/null 2>&1; then
   eval "$(direnv hook zsh)"
 fi
-[ -f ~/.config/powerlevel10k/powerlevel10k.zsh-theme ] && source ~/.config/powerlevel10k/powerlevel10k.zsh-theme
+# powerlevel10k: brew 版 → 手動 clone の順に探す。
+#   brew の formula は $HOMEBREW_PREFIX/share/powerlevel10k/ に置く（caveats で確認）。
+#   NOTE: ここで `brew --prefix` を呼ばない。毎シェル約 30ms の fork になるため
+#         プレフィックスは直書きし、Intel 機のために /usr/local も見る。
+for _p10k_theme in \
+  /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme \
+  /usr/local/share/powerlevel10k/powerlevel10k.zsh-theme \
+  ~/.config/powerlevel10k/powerlevel10k.zsh-theme
+do
+  [ -f "$_p10k_theme" ] && source "$_p10k_theme" && break
+done
+unset _p10k_theme
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
