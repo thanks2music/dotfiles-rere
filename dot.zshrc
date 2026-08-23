@@ -40,19 +40,22 @@ bindkey -e
 bindkey '^]'   vi-find-next-char
 bindkey '^[^]' vi-find-prev-char
 
-if type brew > /dev/null; then
-  export BREW_PREFIX=$(brew --prefix)
-else
-  export BREW_PREFIX='/usr/local'
-fi
 
 # Completion -------------------------------------------------------------------
 
 zstyle ':completion:*:*:make:*' tag-order 'targets'
 
 
-# Homebrew のパスを定義（Apple Siliconの場合）
-export BREW_PREFIX="/opt/homebrew"
+# Homebrew の prefix。Apple Silicon は /opt/homebrew、Intel は /usr/local。
+#   NOTE: `brew --prefix` を呼ばない。毎シェル起動で約 30ms の fork になるため、
+#         ディレクトリの存在で判定する（builtin なので fork ゼロ）。
+#   以前はここより前に `brew --prefix` 版の判定があったが、本行が無条件で上書きしており
+#   dead code だった。同時に Intel 機では誤った値になっていた。
+if [ -d /opt/homebrew ]; then
+  export BREW_PREFIX="/opt/homebrew"
+else
+  export BREW_PREFIX="/usr/local"
+fi
 
 # Completion path 設定
 if [ -d $BREW_PREFIX/share/zsh/zsh-completions ]; then

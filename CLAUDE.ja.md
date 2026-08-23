@@ -77,7 +77,9 @@ brew update && brew upgrade
 
 ### パッケージマネージャー
 - **Homebrew** - macOSパッケージマネージャー（Apple Siliconでは`/opt/homebrew`）
-- **pnpm** - Node.jsパッケージマネージャー（推奨、asdf shimsよりPATH優先度が高い）
+- **pnpm** - Node.js パッケージマネージャー。PATH では asdf shims が先に来るため
+  asdf 管理のランタイムが勝つ。pnpm のグローバルツール (vercel 等) は asdf が
+  管理していないため引き続き参照できる
 - **Composer** - PHPパッケージマネージャー
 
 ### シェル & ターミナル
@@ -193,14 +195,17 @@ extract archive.tar.gz     # 自動検出して展開
 
 ### 重要なパス
 - `GOPATH`: `$HOME/code`
-- `PNPM_HOME`: `/Users/yoshi/Library/pnpm`（PATH最優先）
+- `PNPM_HOME`: `$HOME/Library/pnpm`（asdf shims より後ろに追加されるため asdf が優先）
 - `BREW_PREFIX`: `/opt/homebrew`（Apple Silicon）
 - `ANDROID_SDK_ROOT`: `$HOME/Library/Android/sdk`
 - `JAVA_HOME`: Homebrew の OpenJDK から設定（Android Studio 分岐はマシン間で
   黙って差分が出るため削除した）
 
 ### PATH優先順位
-1. `$PNPM_HOME`（pnpmグローバルパッケージ - 最優先）
+1. `$BREW_PREFIX/opt/openjdk/bin`（JAVA_HOME）
+2. `$HOME/.bun/bin`
+3. `$HOME/.asdf/shims`（asdf 管理のランタイム。pnpm より優先される）
+4. `$PNPM_HOME`（pnpm グローバルパッケージ）
 2. `$HOME/bin`
 3. Homebrew bins
 4. asdf shims（Node.js、Ruby、Pythonなど）
@@ -259,7 +264,8 @@ zshlog    # ~/.zsh_history
 ## 重要な考慮事項
 
 1. **ローカル上書き**：マシン固有の設定（APIキー、ローカルパスなど）には常に`.local`ファイルを使用してください
-2. **PATH管理**：vercel CLIなどのツールが正しく動作するよう、pnpmグローバルパッケージがasdf shimsより優先されます
+2. **PATH 管理**：asdf shims が pnpm グローバルパッケージより優先されます。
+   vercel CLI などの pnpm ツールは asdf が管理していないため引き続き解決されます
 3. **バージョンマネージャー**：asdf のみ、かつ言語ランタイム専用です。rbenv/anyenv は削除しました
 4. **シェル統合**：Amazon QとVS Codeのシェル統合が自動的に読み込まれます
 5. **セキュリティ**：`.local`ファイルは決してコミットしないでください - 機密情報が含まれています

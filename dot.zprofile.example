@@ -9,4 +9,15 @@
 #   自動追記はしない（install.sh のソースで確認済み）。手で入れた場合も同じ内容になる。
 #   これが無いとログインシェルで brew が PATH に載らない。
 
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# NOTE: 存在確認で囲む。setup.sh の phase 順では *.example のコピー (phase 5) が
+#   Homebrew 導入 (phase 8) より先に走るため、brew が未導入の状態でこのファイルが
+#   置かれる。無条件に eval すると、それ以降のログインシェルで
+#   「No such file or directory」が毎回 stderr に出る。
+#   Intel 機のために /usr/local も見る。
+for _brew in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+	if [ -x "$_brew" ]; then
+		eval "$("$_brew" shellenv)"
+		break
+	fi
+done
+unset _brew

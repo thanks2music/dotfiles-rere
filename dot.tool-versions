@@ -5,9 +5,13 @@
 # 2 件 (php / terraform) は plugin があっても未導入だった。実際に PATH で使われていたのは
 # brew 側の新しい版 (jq 1.8.1 / yq 4.47.2 / terraform 1.14.1 / direnv 2.37.1) である。
 #
+# NOTE: java はここで管理しない。dot.zshrc が JAVA_HOME を Homebrew の openjdk に
+#       固定し PATH も openjdk/bin を asdf shims より前に置くため、asdf の pin は
+#       実測で負けていた（which java → /opt/homebrew/opt/openjdk/bin/java）。
+#       二重管理をやめて brew 側に一本化する。
+#
 # 更新手順: asdf latest <tool> で最新を確認 → ここを書き換え → tools/asdf.sh を実行
 nodejs 26.3.0
-java temurin-jre-22.0.1+8
 ruby 3.3.1
 python 3.14.6
 golang 1.22.3

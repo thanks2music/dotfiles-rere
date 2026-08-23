@@ -78,7 +78,9 @@ The shell configuration is split into multiple layers (loaded in order):
 
 ### Package Managers
 - **Homebrew** - macOS package manager (`/opt/homebrew` for Apple Silicon)
-- **pnpm** - Node.js package manager (preferred, prioritized in PATH over asdf shims)
+- **pnpm** - Node.js package manager. Note asdf shims come FIRST in PATH, so
+  asdf-managed runtimes win; pnpm global tools (vercel etc.) are still reachable
+  because asdf does not manage them
 - **Composer** - PHP package manager
 
 ### Shell & Terminal
@@ -194,14 +196,17 @@ extract archive.tar.gz     # Auto-detect and extract
 
 ### Critical Paths
 - `GOPATH`: `$HOME/code`
-- `PNPM_HOME`: `/Users/yoshi/Library/pnpm` (prioritized in PATH)
+- `PNPM_HOME`: `$HOME/Library/pnpm` (appended after asdf shims, so asdf wins)
 - `BREW_PREFIX`: `/opt/homebrew` (Apple Silicon)
 - `ANDROID_SDK_ROOT`: `$HOME/Library/Android/sdk`
 - `JAVA_HOME`: Set from Homebrew OpenJDK (the Android Studio branch was removed
   because it silently differed between machines)
 
 ### PATH Priority
-1. `$PNPM_HOME` (pnpm global packages - highest priority)
+1. `$BREW_PREFIX/opt/openjdk/bin` (JAVA_HOME)
+2. `$HOME/.bun/bin`
+3. `$HOME/.asdf/shims` (asdf-managed runtimes — these win over pnpm)
+4. `$PNPM_HOME` (pnpm global packages)
 2. `$HOME/bin`
 3. Homebrew bins
 4. asdf shims (Node.js, Ruby, Python, etc.)
@@ -260,7 +265,8 @@ zshlog    # ~/.zsh_history
 ## Important Considerations
 
 1. **Local Overrides**: Always use `.local` files for machine-specific configurations (API keys, local paths, etc.)
-2. **PATH Management**: pnpm global packages take priority over asdf shims to ensure tools like vercel CLI work correctly
+2. **PATH Management**: asdf shims take priority over pnpm global packages.
+   pnpm tools like the vercel CLI still resolve because asdf does not manage them
 3. **Version Managers**: asdf only, and only for language runtimes. rbenv/anyenv were removed
 4. **Shell Integration**: Amazon Q and VS Code shell integrations are loaded automatically
 5. **Security**: Never commit `.local` files - they contain sensitive information

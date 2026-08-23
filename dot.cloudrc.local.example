@@ -4,32 +4,41 @@
 # 値は avengers の暗号アーカイブ (migrate/export.sh) 経由で運ぶ。
 #
 # なぜ .example が必要か:
-#   これが無いと新しい Mac で ~/.cloudrc.local がファイルごと存在せず、21 個の変数が
-#   すべて未定義になる。その状態で deploy スクリプトを走らせると
-#   `gcloud --project=""` のように空値で実行され、gcloud の active configuration の
-#   既定プロジェクトを意図せず対象にしうる。空でもファイルが在れば気づける。
+#   変数名の一覧を残すため。値は avengers の暗号アーカイブから入る。
+#
+# なぜ export をコメントアウトしてあるか (重要):
+#   当初は `export VAR=""` と空文字を入れていたが、これは逆効果だった。
+#   `set -u` は「未定義」を検知するが「空文字」は通してしまうため、
+#   空文字を入れると `gcloud --project=""` が静かに通り、gcloud の active
+#   configuration の既定プロジェクトを意図せず対象にしうる。実測:
+#
+#     未定義 + set -u → "unbound variable" で停止 (exit 非ゼロ)
+#     空文字 + set -u → 通過 (exit 0)
+#
+#   コメントアウトしておけば変数名は文書化され、値が無い状態は未定義のまま残るので
+#   deploy スクリプト側の set -u が大きな音を立てて止まる。
 
 # --- Revolution ---
-export REVO_PROJECT_ID=""
-export REVO_REGION=""
-export REVO_DB_INSTANCE_NAME=""
-export REVO_DB_NAME=""
-export REVO_DB_USER=""
-export REVO_BUCKET_NAME=""
-export REVO_PLUGINS_BUCKET_NAME=""
-export REVO_ARTIFACT_REPO_NAME=""
-export REVO_SERVICE_NAME=""
-export REVO_FIREBASE_SERVICE_ACCOUNT_PATH=""
+# export REVO_PROJECT_ID=
+# export REVO_REGION=
+# export REVO_DB_INSTANCE_NAME=
+# export REVO_DB_NAME=
+# export REVO_DB_USER=
+# export REVO_BUCKET_NAME=
+# export REVO_PLUGINS_BUCKET_NAME=
+# export REVO_ARTIFACT_REPO_NAME=
+# export REVO_SERVICE_NAME=
+# export REVO_FIREBASE_SERVICE_ACCOUNT_PATH=
 
 # --- dev-crd-wp ---
-export DEV_CRD_WP_PROJECT_ID=""
-export DEV_CRD_WP_PROJECT_NUMBER=""
-export DEV_CRD_WP_REGION=""
-export DEV_CRD_WP_DB_INSTANCE_NAME=""
-export DEV_CRD_WP_DB_NAME=""
-export DEV_CRD_WP_DB_NAME_SECRET=""
-export DEV_CRD_WP_DB_USER=""
-export DEV_CRD_WP_DB_USER_SECRET=""
-export DEV_CRD_WP_BUCKET_NAME=""
-export DEV_CRD_WP_ARTIFACT_REPO_NAME=""
-export DEV_CRD_WP_SERVICE_NAME=""
+# export DEV_CRD_WP_PROJECT_ID=
+# export DEV_CRD_WP_PROJECT_NUMBER=
+# export DEV_CRD_WP_REGION=
+# export DEV_CRD_WP_DB_INSTANCE_NAME=
+# export DEV_CRD_WP_DB_NAME=
+# export DEV_CRD_WP_DB_NAME_SECRET=
+# export DEV_CRD_WP_DB_USER=
+# export DEV_CRD_WP_DB_USER_SECRET=
+# export DEV_CRD_WP_BUCKET_NAME=
+# export DEV_CRD_WP_ARTIFACT_REPO_NAME=
+# export DEV_CRD_WP_SERVICE_NAME=

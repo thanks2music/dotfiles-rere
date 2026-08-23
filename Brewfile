@@ -121,6 +121,7 @@ brew "oniguruma"
 brew "openapi-generator"
 brew "openblas"
 brew "openssl@3"
+brew "openjdk" # JAVA_HOME の供給元。dot.zshrc が参照するため明示する（従来は bfg/plantuml 等の依存で偶然入っていた）
 brew "pandoc"
 brew "pango"
 brew "parallel"
