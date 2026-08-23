@@ -53,14 +53,20 @@ brew update && brew upgrade
 シェル設定は複数の層に分割されています（読み込み順）：
 
 **ZSH:**
-1. `.zshrc` - メイン設定
-2. `.zshrc.local` - ローカル上書き設定
-3. `.aliasrc` - 共有エイリアス
-4. `.aliasrc.local` - ローカルエイリアス
-5. `.cloudrc` - クラウドプロバイダー設定（AWS、GCP）
-6. `.cloudrc.local` - ローカルクラウド設定
-7. `.airc` - AI/LLM CLI設定
-8. `.airc.local` - ローカルAI設定（APIキー）
+1. `.zshenv` - zsh の**すべての**起動で読まれる（対話・非対話・スクリプト）。
+   `.airc` → `.airc.local` を source するため、Claude Code の設定と API キーが
+   MCP サーバーのような子プロセスにも届く。重い処理と出力は書かない。
+2. `.zprofile` - ログインシェルのみ。`brew shellenv` の唯一の設置箇所。
+3. `.zshrc` - 対話シェルのメイン設定
+4. `.aliasrc` - 共有エイリアス
+5. `.aliasrc.local` - ローカルエイリアス
+6. `.cloudrc` - クラウド設定（AWS, GCP）
+7. `.cloudrc.local` - ローカルのクラウド設定
+8. `.zshrc.local` - ローカル上書き（**最後**に読まれるため上記すべてに勝つ）
+
+補足: `.airc` / `.airc.local` は `.zshrc` から `.zshenv` へ移した。`.zshrc` は対話シェルしか
+読まないため、そこに書いた値は新規の非対話 zsh（cron / `#!/bin/zsh` スクリプト /
+`ssh host cmd`）に一切届かない。
 
 **Bash:**
 1. `.bash_profile` - ログインシェル設定

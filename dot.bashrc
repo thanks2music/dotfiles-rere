@@ -7,9 +7,9 @@ if [ -e $BREW_PREFIX/opt/asdf/libexec/asdf.sh ]; then
 fi
 
 # Node.js
-## I’m not using Volta, but it was installed automatically. Will remove it later.
-export VOLTA_HOME="$HOME/.volta"
-export PATH="$VOLTA_HOME/bin:$PATH"
+# NOTE: volta の残骸を削除した。コマンド・~/.volta・Brewfile すべて不在で、
+#       不在ディレクトリを PATH に無条件 prepend していた（コメント自身も
+#       「使っていない、後で消す」と書いていた）。
 
 # VS Code
 [[ "$TERM_PROGRAM" == "vscode" ]] && type code > /dev/null 2>&1 && . "$(code --locate-shell-integration-path bash)"
