@@ -2,7 +2,7 @@
 alias ..="cd ../"
 alias ...="cd ../.."
 alias ....="cd ../../.."
-alias o=$EDITOR
+alias o='$EDITOR'
 alias vi=nvim
 alias vim=nvim
 alias dotf="cd $HOME/dotfiles"
@@ -10,9 +10,16 @@ alias dotfiles="cd $HOME/dotfiles"
 
 # Shell
 alias ls='ls --color=auto'
-alias ll='ls -la --block-size=KB'
 alias la='ls -A'
-alias lal='ls -l -A --block-size=KB'
+# --block-size は GNU coreutils 専用。macOS 標準の BSD ls は非対応で毎回失敗するため、
+# coreutils(gnubin) が PATH に入っているかで切り替える。`command` で alias を迂回して判定。
+if command ls --block-size=KB /dev/null > /dev/null 2>&1; then
+  alias ll='ls -la --block-size=KB'
+  alias lal='ls -l -A --block-size=KB'
+else
+  alias ll='ls -la'
+  alias lal='ls -l -A'
+fi
 alias lsof-listen='lsof -i -P | grep "LISTEN"'
 alias reload-shell='exec $SHELL -l'
 
@@ -22,7 +29,7 @@ alias a='add-git-files'
 alias d='git diff'
 alias s='git status'
 alias st='git status -s'
-alias gm= 'git co master'
+alias gm='git co master'
 alias ga='git add -A'
 alias gg='git grep'
 alias git-tags-top10='git for-each-ref --sort=-creatordate --format="%(refname:short)" refs/tags | head -n 10'
