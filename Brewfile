@@ -13,13 +13,13 @@
 #
 # 検証: brew bundle check --file=Brewfile
 
+# tap は「実際に消費している formula/cask がある分だけ」宣言する。
+#   消費者ゼロの tap 宣言を残すと、Homebrew 6.0 の tap-trust 機構が
+#   "The following taps are not trusted" を大量に出し、その tap の内容を無視する。
+#   2026-08-24 に Air の初回構築で 6 件（ddev/ddev, shivammathur/php, harelba/q,
+#   stripe/stripe-cli, golangci/tap, hashicorp/tap）がこの状態になっていたため削除した。
+#   いずれも対応 formula を core から外した際に tap 行だけ残していたもの。
 tap "mongodb/brew", trusted: true
-tap "ddev/ddev"
-tap "shivammathur/php"
-tap "harelba/q"
-tap "stripe/stripe-cli"
-tap "golangci/tap"
-tap "hashicorp/tap"
 tap "supabase/tap"
 brew "ack"
 brew "actionlint"
@@ -173,14 +173,16 @@ brew "zsh-autosuggestions"
 brew "zsh-completions"
 brew "zsh-git-prompt"
 brew "zstd"
-cask "adobe-digital-editions"
 cask "alfred"
 cask "appcleaner"
 cask "bartender"
 cask "bettertouchtool"
 cask "brave-browser"
 cask "bruno"
-cask "chromium"
+# chromium は 2026-09-01 に disabled になる（`disable_reason: fails_gatekeeper_check`）。
+#   disabled になった cask は `brew bundle install` を**ハード失敗**させる（qblocker で実証済み）。
+#   Chromium 系の用途は brave-browser / google-chrome で満たせるため core から外す。
+#   必要なら `brew install --cask chromium` で手動導入できる（無効化日まで）。
 cask "claude"
 cask "clipy"
 cask "codex"
@@ -240,7 +242,6 @@ cask "rio"
 cask "sequel-ace"
 cask "session-manager-plugin"
 cask "sip-app"
-cask "skitch"
 cask "slack"
 cask "smartsvn"
 cask "switchhosts"
