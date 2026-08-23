@@ -11,9 +11,16 @@ alias dotfiles="cd $HOME/dotfiles"
 # Shell
 alias ls='ls --color=auto'
 alias la='ls -A'
-# --block-size は GNU coreutils 専用。macOS 標準の BSD ls は非対応で毎回失敗するため、
-# coreutils(gnubin) が PATH に入っているかで切り替える。`command` で alias を迂回して判定。
-if command ls --block-size=KB /dev/null > /dev/null 2>&1; then
+# --block-size は GNU coreutils 専用。macOS 標準の BSD ls は非対応で毎回失敗する。
+#
+# 判定は「gnubin の ls が実在するか」というファイルテストで行う。理由が 2 つある:
+#   1. PATH を見てはいけない。本ファイルは dot.zshrc の冒頭 (行 8) で source されるが
+#      gnubin が PATH に載るのは行 75 なので、この時点では coreutils が入っていても
+#      PATH からは見えず、常に BSD 側に落ちてしまう。
+#   2. `ls --block-size` を実行して判定すると毎シェル起動で 1 回 fork する (実測 2.5ms)。
+#      ファイルテストは builtin なので fork ゼロ。
+if [ -x /opt/homebrew/opt/coreutils/libexec/gnubin/ls ] \
+  || [ -x /usr/local/opt/coreutils/libexec/gnubin/ls ]; then
   alias ll='ls -la --block-size=KB'
   alias lal='ls -l -A --block-size=KB'
 else
