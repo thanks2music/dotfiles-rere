@@ -43,7 +43,7 @@
       "default_config_options": {
         "fast": false,
         "mode": "plan",
-        "model": "claude-fable-5[1m]"
+        "model": "default"
       },
       "type": "registry"
     }
