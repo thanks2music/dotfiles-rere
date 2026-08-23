@@ -245,23 +245,35 @@ function phase_avengers {
 		# `ssh -T git@github.com` は認証成功でも exit 1 を返すので、終了コードでは判定できない。
 		# メッセージで判定する。accept-new で新規 Mac のホスト鍵プロンプト待ちを防ぎ、
 		# BatchMode でパスワード入力待ちも防ぐ（どちらも stdin を掴んで停止する経路）。
-		if ssh -o StrictHostKeyChecking=accept-new -o ConnectTimeout=5 -o BatchMode=yes \
-			-T git@github.com 2>&1 | grep -q 'successfully authenticated'; then
+		#
+		# IMPORTANT: パイプで grep に渡してはいけない。本スクリプトは set -o pipefail なので
+		#   `ssh ... | grep -q ...` はパイプ全体が ssh の exit 1 を採用し、認証が成功していても
+		#   常に false になる（実測で確認）。出力を変数に取ってから判定する。
+		#   `|| true` は exit 1 で $ssh_msg の代入自体が失敗扱いになるのを防ぐため。
+		local ssh_msg
+		ssh_msg="$(ssh -o StrictHostKeyChecking=accept-new -o ConnectTimeout=5 -o BatchMode=yes \
+			-T git@github.com 2>&1 || true)"
+		case "$ssh_msg" in
+		*'successfully authenticated'*)
 			info "SSH 認証 OK。clone する"
 			git clone "$ssh_url" "$dir" || { fail "avengers の clone に失敗"; return 1; }
-		elif command -v gh > /dev/null 2>&1 && gh auth status > /dev/null 2>&1; then
-			info "gh 認証を使って HTTPS で clone する"
-			gh auth setup-git > /dev/null 2>&1 || true
-			git clone "$https_url" "$dir" || { fail "avengers の clone に失敗"; return 1; }
-		else
-			warn "avengers (private) の認証がありません"
-			cat <<-EOS
-			       次のいずれかを行ってから本スクリプトを再実行してください:
-			         a) ~/.ssh の秘密鍵を復元して chmod 600 する
-			         b) gh auth login
-			EOS
-			return 2
-		fi
+			;;
+		*)
+			if command -v gh > /dev/null 2>&1 && gh auth status > /dev/null 2>&1; then
+				info "gh 認証を使って HTTPS で clone する"
+				gh auth setup-git > /dev/null 2>&1 || true
+				git clone "$https_url" "$dir" || { fail "avengers の clone に失敗"; return 1; }
+			else
+				warn "avengers (private) の認証がありません"
+				cat <<-EOS
+				       次のいずれかを行ってから本スクリプトを再実行してください:
+				         a) ~/.ssh の秘密鍵を復元して chmod 600 する
+				         b) gh auth login
+				EOS
+				return 2
+			fi
+			;;
+		esac
 	fi
 
 	if [ ! -f "$dir/bootstrap.sh" ]; then
