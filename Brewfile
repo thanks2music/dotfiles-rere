@@ -255,17 +255,3 @@ cask "wezterm"
 cask "whatsapp"
 cask "zed"
 cask "zoom"
-mas "AdBlock Pro", id: 1018301773
-mas "Be Focused Pro", id: 961632517
-mas "JPEGmini", id: 498944723
-mas "Keyknockr", id: 6478761835
-mas "Keynote", id: 409183694
-mas "LINE", id: 539883307
-mas "MWeb Pro", id: 1403919533
-mas "Numbers", id: 361304891
-mas "PopClip", id: 445189367
-mas "RunCat", id: 1429033973
-mas "ScreenBrush", id: 1233965871
-mas "The Unarchiver", id: 425424353
-mas "Things", id: 904280696
-mas "Vimari", id: 1480933944

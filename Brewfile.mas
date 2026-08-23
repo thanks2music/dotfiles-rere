@@ -1,0 +1,33 @@
+# Brewfile.mas — Mac App Store 経由のアプリ
+#
+# setup.sh は本ファイルを呼ばない。App Store に **サインイン済み**であることが前提のため。
+#
+#   実行: brew bundle install --file=~/dotfiles/Brewfile.mas
+#
+# なぜ分離したか:
+#   mas は programmatic なサインインができない。実機で `mas account` は
+#   「This command is not supported on this macOS version due to changes in macOS」
+#   を返す (mas-cli の known issues)。有料アプリを含むため、未サインインの新しい Mac では
+#   これらが失敗し、brew bundle が非ゼロ終了する。
+#
+#   そうなると「実パッケージのビルド失敗」と「Apple ID にサインインしていないだけ」を
+#   区別できなくなる。Brewfile.vscode を分けた理由 (前提条件が違う) と同じ判断。
+#
+# 手順:
+#   1. App Store.app を開いて Apple ID でサインインする
+#   2. 上記コマンドを実行する
+
+mas "AdBlock Pro", id: 1018301773
+mas "Be Focused Pro", id: 961632517
+mas "JPEGmini", id: 498944723
+mas "Keyknockr", id: 6478761835
+mas "Keynote", id: 409183694
+mas "LINE", id: 539883307
+mas "MWeb Pro", id: 1403919533
+mas "Numbers", id: 361304891
+mas "PopClip", id: 445189367
+mas "RunCat", id: 1429033973
+mas "ScreenBrush", id: 1233965871
+mas "The Unarchiver", id: 425424353
+mas "Things", id: 904280696
+mas "Vimari", id: 1480933944

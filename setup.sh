@@ -225,6 +225,9 @@ function phase_brew_bundle {
 	if [ -f "$dotfiles_dir/Brewfile.vscode" ]; then
 		info "任意: brew bundle install --file=$dotfiles_dir/Brewfile.vscode  (code が PATH に必要)"
 	fi
+	if [ -f "$dotfiles_dir/Brewfile.mas" ]; then
+		info "任意: brew bundle install --file=$dotfiles_dir/Brewfile.mas  (App Store サインインが必要)"
+	fi
 }
 
 function phase_brewfile_global {
