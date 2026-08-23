@@ -222,6 +222,15 @@ function phase_brew_bundle {
 	if [ -f "$dotfiles_dir/Brewfile.desktop" ]; then
 		info "任意: brew bundle install --file=$dotfiles_dir/Brewfile.desktop"
 	fi
+	if [ -f "$dotfiles_dir/Brewfile.vscode" ]; then
+		info "任意: brew bundle install --file=$dotfiles_dir/Brewfile.vscode  (code が PATH に必要)"
+	fi
+}
+
+function phase_brewfile_global {
+	# `brew bundle --global` は ~/.Brewfile を読む。repo の Brewfile への symlink にして
+	# 「--global と --file= が別の内容を見る」状態を構造的になくす。
+	link "$dotfiles_dir/Brewfile" "$HOME/.Brewfile"
 }
 
 function phase_avengers {
@@ -274,6 +283,7 @@ phase 'Setup Vim'                            phase_vim
 phase 'Setup Zed settings'                   phase_zed
 phase 'Setup Homebrew'                       phase_homebrew
 phase 'Install packages (Brewfile)'          phase_brew_bundle
+phase 'Link ~/.Brewfile'                     phase_brewfile_global
 phase 'Setup avengers (private AI config)'   phase_avengers
 
 topic 'summary'
