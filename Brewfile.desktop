@@ -32,3 +32,8 @@ cask "vivaldi"
 cask "warp"
 cask "zen"
 mas "Xcode", id: 497799835
+
+# Rosetta 2 を必須とするため、素の Apple Silicon 機では installer が必ず失敗する
+#   （2026-08-24 に Air で実測: "This package requires Rosetta 2 to be installed"）。
+#   Pro では Rosetta が既に入っているため動くが、core に置くと新機の構築を止める。
+cask "adobe-digital-editions"
