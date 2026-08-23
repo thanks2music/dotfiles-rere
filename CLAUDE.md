@@ -53,14 +53,20 @@ brew update && brew upgrade
 The shell configuration is split into multiple layers (loaded in order):
 
 **ZSH:**
-1. `.zshrc` - Main configuration
-2. `.zshrc.local` - Local overrides
-3. `.aliasrc` - Shared aliases
-4. `.aliasrc.local` - Local aliases
-5. `.cloudrc` - Cloud provider configs (AWS, GCP)
-6. `.cloudrc.local` - Local cloud configs
-7. `.airc` - AI/LLM CLI configs
-8. `.airc.local` - Local AI configs (API keys)
+1. `.zshenv` - Read on **every** zsh invocation (interactive, non-interactive, scripts).
+   Sources `.airc` then `.airc.local`, so Claude Code settings and API keys reach
+   child processes such as MCP servers. Keep it silent and cheap.
+2. `.zprofile` - Login shells only. Holds `brew shellenv` (the only place it lives).
+3. `.zshrc` - Main interactive configuration
+4. `.aliasrc` - Shared aliases
+5. `.aliasrc.local` - Local aliases
+6. `.cloudrc` - Cloud provider configs (AWS, GCP)
+7. `.cloudrc.local` - Local cloud configs
+8. `.zshrc.local` - Local overrides (**last**, so it wins over everything above)
+
+Note: `.airc` / `.airc.local` moved from `.zshrc` to `.zshenv`. `.zshrc` is only read by
+interactive shells, so anything defined there never reaches a fresh non-interactive zsh
+(cron, `#!/bin/zsh` scripts, `ssh host cmd`).
 
 **Bash:**
 1. `.bash_profile` - Login shell configuration

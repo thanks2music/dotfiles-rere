@@ -21,11 +21,13 @@ if [ -f $HOME/.cloudrc.local ]; then
 fi
 
 # AI
-[ -f "$HOME/.airc" ] && source "$HOME/.airc"
+# NOTE: ~/.airc と ~/.airc.local の source は ~/.zshenv (dot.zshenv) へ移した。
+#       .airc は CLAUDE_CODE_MAX_OUTPUT_TOKENS 等 Claude Code の子プロセス向けの値なので、
+#       対話シェル限定の .zshrc では届かない。
 ## for LLM API
-if [ -f $HOME/.airc.local ]; then
-  source $HOME/.airc.local
-fi
+# NOTE: ~/.airc.local の source は ~/.zshenv (dot.zshenv) へ移した。
+#       .zshrc は対話シェルでしか読まれないため、ここに置くと Claude Code が spawn する
+#       MCP サーバーや hook から API キーが 1 つも見えなかった（実測で確認）。
 
 # Path -------------------------------------------------------------------
 export TERM=xterm-256color
