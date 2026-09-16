@@ -22,9 +22,11 @@ jobs:
       !endsWith(github.actor, '[bot]')
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # この permissions が絞るのは GITHUB_TOKEN だけ。コメント投稿は Claude GitHub App のトークン
+    # (権限は App 側で決まる) で行うため、pull-requests は read で足りる (2026-09 実測で確認)
     permissions:
       contents: read
-      pull-requests: write
+      pull-requests: read
       id-token: write # Claude GitHub App のトークン交換 (OIDC) に必須
 
     steps:
