@@ -1,0 +1,50 @@
+name: Claude Code
+
+# @claude メンションに応答する interactive mode。anthropics/claude-code-action の examples/claude.yml に準拠。
+# 起動できるのはリポジトリへの write 権限を持つユーザーのみ (action 側で検査される)。
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  issues:
+    types: [opened, assigned]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  claude:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
+      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write # Claude がブランチを作ってコミットできるように
+      pull-requests: write
+      issues: write
+      id-token: write # Claude GitHub App のトークン交換 (OIDC) に必須
+      actions: read # PR の CI 結果を Claude が読めるように
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          # Console の API キーを使う場合は `anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}` に置き換える
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
+          # CI 結果の読み取りを App トークンにも付与する
+          additional_permissions: |
+            actions: read
+
+          # 任意: モデルやターン数の上限などを CLI 引数で指定する
+          # claude_args: |
+          #   --max-turns 20
