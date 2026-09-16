@@ -15,6 +15,7 @@
   "buffer_font_family": "NotoSans Nerd Font",
   "ui_font_family": "NotoSans Nerd Font",
   "terminal": {
+    "shell": "system",
     "cursor_shape": "block",
     "font_size": 14.0,
     "font_weight": 300.0,
