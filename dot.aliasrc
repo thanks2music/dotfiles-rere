@@ -11,6 +11,7 @@ alias dotfiles="cd $HOME/dotfiles"
 # Shell
 alias ls='ls --color=auto'
 alias la='ls -A'
+alias rp='realpath'
 # --block-size は GNU coreutils 専用。macOS 標準の BSD ls は非対応で毎回失敗する。
 #
 # 判定は「gnubin の ls が実在するか」というファイルテストで行う。理由が 2 つある:
