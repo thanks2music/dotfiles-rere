@@ -1,0 +1,57 @@
+#!/bin/bash
+#
+# noexc — 親から継承した Mach 例外ポートを外してからコマンドを実行する
+#
+#   使い方: noexc terraform plan
+#
+# なぜ必要か (2026-09-18 実測):
+#   Zed (1.20.2) は自分のタスクに EXC_BAD_ACCESS の Mach 例外ハンドラを登録する。
+#   例外ポートは子プロセスに継承され、exec をまたいでも残る。
+#
+#   Go のプログラムは nil ポインタ参照などのメモリアクセス違反を SIGSEGV として
+#   受け取り panic に変換して回収する。例外ポートが登録されていると Mach 例外が
+#   先に横取りされてシグナルが届かず、違反した命令が再実行され続ける。
+#   その結果、CPU を使ったままプロセスが固まる (SIGTERM でも止まらない)。
+#
+#   実例: Zed 配下の Claude Code から実行した `terraform init` が、
+#   internal/initwd/module_install.go:256 の log.Printf (nil の *version.Version に
+#   String() を呼ぶ、本来は fmt が回収する正常な経路) で固まる。
+#   本ラッパー経由なら 4 秒で完了する。
+#
+# 影響範囲は terraform に限らず、Zed 配下で動く Go 製 CLI 全般。
+# 通常のターミナルから起動している場合は例外ポートが無いので、付けても害はない。
+set -uo pipefail
+
+if [ $# -lt 1 ]; then
+	echo "usage: noexc <command> [args...]" >&2
+	exit 2
+fi
+
+cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/noexc"
+bin="$cache_dir/noexc-$(uname -m)"
+src="$cache_dir/noexc.c"
+
+# 初回だけコンパイルする (要 Xcode Command Line Tools)。
+if [ ! -x "$bin" ] || [ "${0}" -nt "$bin" ]; then
+	mkdir -p "$cache_dir" || exit 1
+	cat > "$src" <<'EOF'
+#include <mach/mach.h>
+#include <stdio.h>
+#include <unistd.h>
+
+int main(int argc, char **argv) {
+    if (argc < 2) { fprintf(stderr, "usage: noexc <command> [args...]\n"); return 2; }
+    // 親から継承した例外ポートを外す。以降このプロセスではメモリアクセス違反が
+    // 通常どおりシグナルとして配送される。exec をまたいで引き継がれる。
+    task_set_exception_ports(mach_task_self(),
+                             EXC_MASK_BAD_ACCESS | EXC_MASK_BAD_INSTRUCTION | EXC_MASK_ARITHMETIC,
+                             MACH_PORT_NULL, EXCEPTION_DEFAULT, THREAD_STATE_NONE);
+    execvp(argv[1], argv + 1);
+    perror("noexc: execvp");
+    return 127;
+}
+EOF
+	cc -O2 -o "$bin" "$src" || { echo "noexc: コンパイルに失敗しました (xcode-select --install が必要かもしれません)" >&2; exit 1; }
+fi
+
+exec "$bin" "$@"

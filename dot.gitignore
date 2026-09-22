@@ -32,3 +32,6 @@ node_modules/
 */Assets/Editor/JetBrains.meta
 
 **/reference/*
+
+# MCP ツールがカレントディレクトリに吐く作業ファイル（どのリポでも発生する）
+.playwright-mcp/
