@@ -43,7 +43,7 @@
       },
       "default_config_options": {
         "fast": false,
-        "mode": "plan",
+        "mode": "auto",
         "model": "default"
       },
       "type": "registry"
