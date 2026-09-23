@@ -1,0 +1,40 @@
+# asdf-nodejs が Node インストール直後に `npm install -g` するパッケージ一覧。
+#
+# 配置: setup.sh の phase_dotfiles が dot.* を ~/.* へ symlink するため、
+#       本ファイルは ~/.default-npm-packages になる。asdf-nodejs plugin が
+#       $HOME/.default-npm-packages を既定で読む (bin/install:36)。
+#       ASDF_NPM_DEFAULT_PACKAGES_FILE で場所を上書きすることもできる。
+#
+# なぜ必要か:
+#   npm のグローバルパッケージは asdf の Node バージョンごとに隔離されている
+#   (~/.asdf/installs/nodejs/<version>/lib/node_modules)。Brewfile にも
+#   dot.tool-versions にも載らないため、**新しいマシンには何も入らず、
+#   Node を上げると消える**。実際に MacBook Air の構築で顕在化した。
+#
+# ⚠️ 書き方の制約 (plugin のソースで確認: bin/install:78)
+#   除去されるのは **行頭の # で始まる行だけ** である。
+#
+#       done < <(grep -v '^\s*#' "$pkgs_file")
+#
+#   行末コメントは除去されず、`#` とその後ろの語が npm のパッケージ名として
+#   渡されて失敗する。コメントは必ず行頭から書くこと。
+#
+#       NG:  @google/gemini-cli   # Gemini CLI
+#       OK:  # Gemini CLI
+#            @google/gemini-cli
+#
+#   また ` -` を含む行はそれ自体が 1 コマンドとして扱われるため、
+#   オプションを付ける場合は 1 行に 1 パッケージで書く。
+#
+# ⚠️ 失敗は握り潰される (bin/install:93-94)
+#   ここでのインストールが失敗しても WARNING が出るだけで Node の導入自体は
+#   成功扱いになる。`asdf install` が通っても入っているとは限らないので、
+#   tools/asdf.sh の同期ステップか `npm ls -g --depth=0` で確認すること。
+#
+# 既存マシンへの反映:
+#   本ファイルは Node の**インストール時にしか**読まれない。既に Node が入って
+#   いるマシンには `bash tools/asdf.sh --npm` で反映する。
+
+# Gemini CLI。Homebrew の formula 版 (0.46.0) より npm 版 (0.60.0) の方が
+# 新しいため npm 側に一本化した。Brewfile からは意図的に外してある。
+@google/gemini-cli
