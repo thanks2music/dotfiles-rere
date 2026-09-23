@@ -6,7 +6,8 @@
 #   使い方:
 #     bash tools/asdf.sh --dry-run   # 何をするか表示するだけ
 #     bash tools/asdf.sh --plugins   # plugin 追加だけ（ビルドは走らせない）
-#     bash tools/asdf.sh             # plugin 追加 + asdf install
+#     bash tools/asdf.sh --npm       # npm グローバルの同期だけ（既存マシン用）
+#     bash tools/asdf.sh             # plugin 追加 + asdf install + npm 同期
 #
 #   ⚠️ ruby / python はソースビルドのため初回は 10〜30 分かかる。
 #      setup.sh の主経路からは意図的に外している（1 個の失敗で全体が止まるのを避けるため）。
@@ -22,10 +23,12 @@ VERSIONS="$ROOT/dot.tool-versions"
 
 DRY=0
 PLUGINS_ONLY=0
+NPM_ONLY=0
 while [ $# -gt 0 ]; do
 	case "$1" in
 		--dry-run) DRY=1 ;;
 		--plugins) PLUGINS_ONLY=1 ;;
+		--npm)     NPM_ONLY=1 ;;
 		-h|--help) sed -n '2,16p' "$0"; exit 0 ;;
 		*) echo "unknown arg: $1" >&2; exit 2 ;;
 	esac
@@ -37,6 +40,60 @@ command -v asdf > /dev/null 2>&1 || {
 	exit 1
 }
 [ -f "$VERSIONS" ] || { echo "ERROR: $VERSIONS が無い" >&2; exit 1; }
+
+sync_npm_globals() {
+	# asdf-nodejs は .default-npm-packages を **Node のインストール時にしか**読まない
+	# (plugin の bin/install:93 が install の最後に 1 回呼ぶだけ)。既に Node が入って
+	# いるマシンでは一覧に足しても何も起きないため、ここで明示的に取り込む。
+	#
+	# さらに plugin 側は失敗しても WARNING を出すだけで Node の導入を成功扱いにする
+	# (bin/install:93-94)。「asdf install が通った = 入っている」とは限らない。
+	local pkgs_file="$ROOT/dot.default-npm-packages"
+	[ -f "$pkgs_file" ] || { echo "     skip  dot.default-npm-packages が無い"; return 0; }
+	command -v npm > /dev/null 2>&1 || { echo "     skip  npm が無い（asdf install nodejs が先）"; return 0; }
+
+	local rc=0 pkg installed
+	installed="$(npm ls -g --depth=0 --parseable 2>/dev/null | sed 's#.*/node_modules/##' | tr '\n' ' ')"
+	# 行頭 # の行だけを除く。plugin 本体と同じ規則に合わせる (bin/install:78)。
+	while IFS= read -r pkg; do
+		case "$pkg" in ''|\#*) continue ;; esac
+		# 名前だけを取り出す。@scope/name は先頭の @ が区切りではないため、
+		# 単純な ${name%@*} は scoped パッケージを空文字に潰す（実測で踏んだ。
+		# 空文字は installed の照合に必ず一致し、未導入でも ok と誤報告する）。
+		# @ の個数で「バージョン指定が付いているか」を判定する。
+		local name="${pkg%% *}"
+		local bare="$name"
+		local n_at; n_at="$(printf '%s' "$name" | tr -cd '@' | wc -c | tr -d ' ')"
+		case "$name" in
+			@*) [ "$n_at" -gt 1 ] && bare="${name%@*}" ;;
+			 *) [ "$n_at" -gt 0 ] && bare="${name%@*}" ;;
+		esac
+		[ -n "$bare" ] || { printf '     FAIL  パッケージ名を解釈できない: %s\n' "$pkg"; rc=1; continue; }
+		# -F (固定文字列) が必須。パッケージ名は . を含みうる (socket.io 等) ため、
+		# 正規表現として解釈すると任意の 1 文字に一致して誤検出する。
+		# 直上の bare 導出バグと同じく「文字列比較のつもりが別物になる」系の穴。
+		if echo " $installed " | grep -qF " ${bare} "; then
+			printf '     ok    %s\n' "$bare"
+		elif [ "$DRY" = 1 ]; then
+			printf '     would npm install -g %s\n' "$name"
+		elif npm install -g "$name" > /dev/null 2>&1; then
+			printf '     add   %s\n' "$name"
+		else
+			printf '     FAIL  %s\n' "$name"; rc=1
+		fi
+	done < <(grep -v '^[[:space:]]*#' "$pkgs_file")
+	[ "$DRY" = 1 ] || asdf reshim nodejs > /dev/null 2>&1 || true
+	return $rc
+}
+
+
+if [ "$NPM_ONLY" = 1 ]; then
+	echo "==> npm グローバルを dot.default-npm-packages に同期する"
+	sync_npm_globals || exit 1
+	exit 0
+fi
+
+
 
 # plugin 名 → git URL の上書き表。
 #   公式は短縮名リポジトリへの依存を避けるため URL 指定を推奨しているが、
@@ -120,6 +177,10 @@ if ! asdf install; then
 	echo "FAIL: asdf install が失敗した。個別に 'asdf install <tool> <version>' で切り分けてください。" >&2
 	exit 1
 fi
+
+echo
+echo "==> npm グローバルを dot.default-npm-packages に同期する"
+sync_npm_globals || fails=$((fails + 1))
 
 echo
 echo "==> 結果"
