@@ -69,7 +69,10 @@ sync_npm_globals() {
 			 *) [ "$n_at" -gt 0 ] && bare="${name%@*}" ;;
 		esac
 		[ -n "$bare" ] || { printf '     FAIL  パッケージ名を解釈できない: %s\n' "$pkg"; rc=1; continue; }
-		if echo " $installed " | grep -q " ${bare} "; then
+		# -F (固定文字列) が必須。パッケージ名は . を含みうる (socket.io 等) ため、
+		# 正規表現として解釈すると任意の 1 文字に一致して誤検出する。
+		# 直上の bare 導出バグと同じく「文字列比較のつもりが別物になる」系の穴。
+		if echo " $installed " | grep -qF " ${bare} "; then
 			printf '     ok    %s\n' "$bare"
 		elif [ "$DRY" = 1 ]; then
 			printf '     would npm install -g %s\n' "$name"
