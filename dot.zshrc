@@ -360,6 +360,14 @@ function count() {
   echo -n "${1-.}" | wc -m
 }
 
+# gh gist create を実行し、HTML をページとして開ける gistpreview の URL も表示する
+function gistpage() {
+  local url
+  url="$(gh gist create "$@")" || return
+  echo "$url"
+  echo "Preview: https://gistpreview.github.io/?${url##*/}"
+}
+
 # Prompt -----------------------------------------------------------------------
 
 autoload -Uz vcs_info
