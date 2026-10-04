@@ -7,9 +7,6 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
-  "edit_predictions": {
-    "mode": "eager"
-  },
   "ui_font_weight": 400.0,
   "buffer_font_weight": 400.0,
   "buffer_font_family": "NotoSans Nerd Font",
@@ -19,7 +16,9 @@
     "cursor_shape": "block",
     "font_size": 14.0,
     "font_weight": 300.0,
-    "font_family": "Hack Nerd Font"
+    "font_family": "Hack Nerd Font",
+    // 0 = 自動コントラスト補正を無効化し、theme_overrides の色をそのまま使う
+    "minimum_contrast": 0
   },
   "session": {
     "trust_all_worktrees": true
@@ -61,5 +60,32 @@
     "mode": "light",
     "light": "One Light",
     "dark": "One Dark",
+  },
+  // UI は One Light のまま、ターミナルだけ iTerm2の配色で上書きする
+  "theme_overrides": {
+    "One Light": {
+      "terminal.background": "#1d2837",
+      // 反転表示 (zsh の貼り付け強調など) の文字色に使われる。未指定だと One Light の白系になり読めない
+      "terminal.ansi.background": "#1d2837",
+      "terminal.foreground": "#ffffff",
+      "terminal.bright_foreground": "#ffffff",
+      "terminal.dim_foreground": "#bbbbbb",
+      "terminal.ansi.black": "#000000",
+      "terminal.ansi.red": "#f9555f",
+      "terminal.ansi.green": "#21b089",
+      "terminal.ansi.yellow": "#fef02a",
+      "terminal.ansi.blue": "#589df6",
+      "terminal.ansi.magenta": "#b77fd6",
+      "terminal.ansi.cyan": "#1f9ee7",
+      "terminal.ansi.white": "#bbbbbb",
+      "terminal.ansi.bright_black": "#7a8599",
+      "terminal.ansi.bright_red": "#fa8c8f",
+      "terminal.ansi.bright_green": "#35bb9a",
+      "terminal.ansi.bright_yellow": "#ffff55",
+      "terminal.ansi.bright_blue": "#82b8ff",
+      "terminal.ansi.bright_magenta": "#e75699",
+      "terminal.ansi.bright_cyan": "#5fc8f0",
+      "terminal.ansi.bright_white": "#ffffff"
+    }
   },
 }
