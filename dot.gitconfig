@@ -82,6 +82,7 @@
   review = "!sh -c 'git push origin HEAD:refs/for/master/`git current-branch`'"
   # GitHub
   pr = !git push origin $(git current-branch)
+  pf = !git push --force-with-lease origin $(git current-branch)
   kokomade = tag -f '$B$3$3$^$GFI$s$@(B' origin/master
   newspaper = log -p --reverse '$B$3$3$^$GFI$s$@(B'..origin/master
   # merge$B$N:]$K(Bconflict$B$,5/$-$?%U%!%$%k$rJT=8(B
