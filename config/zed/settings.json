@@ -41,6 +41,7 @@
         ]
       },
       "default_config_options": {
+        "effort": "xhigh",
         "fast": false,
         "mode": "auto",
         "model": "default"
@@ -64,6 +65,10 @@
   // UI は One Light のまま、ターミナルだけ iTerm2の配色で上書きする
   "theme_overrides": {
     "One Light": {
+      // 選択範囲の色。ターミナル専用のキーが無いため、エディタの選択色も一緒に濃くなる
+      "players": [
+        { "selection": "#7c9cffa6" }
+      ],
       "terminal.background": "#1d2837",
       // 反転表示 (zsh の貼り付け強調など) の文字色に使われる。未指定だと One Light の白系になり読めない
       "terminal.ansi.background": "#1d2837",
