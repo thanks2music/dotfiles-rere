@@ -25,7 +25,7 @@ asdf で管理するのは言語ランタイムだけ（`dot.tool-versions` の�
 - asdf の pnpm plugin（`jonathanmorley/asdf-pnpm`）は pnpm 公式のものではない。plugin は追加されているが、版は 1 つも入っていない。
   紛らわしければ `asdf plugin remove pnpm` で外してよい
 
-> 2026-03-02 の報告書（下の「関連」）の環境表には「pnpm 10.11.0 (asdf 管理)」とある。2026-10-11 時点では asdf に pnpm の版は無く、上の方針に一本化している。
+> 2026-03-02 の報告書（下の「関連」。gitignore 済みで手元にだけある）の環境表には「pnpm 10.11.0 (asdf 管理)」とある。2026-10-11 時点では asdf に pnpm の版は無く、上の方針に一本化している。
 
 ## pnpm 10 と 11 以降の配置の違い
 
@@ -58,6 +58,10 @@ asdf で管理するのは言語ランタイムだけ（`dot.tool-versions` の�
 ---
 
 ## 手順（次に上げるとき）
+
+> **pnpm 10 のマシンでは、先に pnpm を 11 以上へ上げる。** pnpm 10 には `$PNPM_HOME/bin` が無く、pnpm 本体もグローバルのコマンドも `$PNPM_HOME` の直下にある。
+> `dot.zshrc` は `$PNPM_HOME/bin` しか PATH に入れないので、そのままでは見つからない。
+> `~/Library/pnpm/pnpm self-update` のようにパスで呼んで上げ、そのあと下の `pnpm update -g` でグローバルのパッケージを移す（移せるのは v11.28.1 以降）。
 
 ```bash
 cd ~                                   # プロジェクトの外で実行する
@@ -127,7 +131,7 @@ Reinstall pnpm with its build scripts allowed to run the binary directly.
 
 ## 関連
 
-- [report/2026-03-02-node-version-pnpm-path-and-claude-code-fix.md](report/2026-03-02-node-version-pnpm-path-and-claude-code-fix.md) — なぜ pnpm の PATH を asdf より前に書くのか（pnpm の Node.js が asdf の Node.js より先に使われていた件）
+- `docs/report/2026-03-02-node-version-pnpm-path-and-claude-code-fix.md`（`docs/report` は gitignore 済みで、手元にだけある） — なぜ pnpm の PATH を asdf より前に書くのか。要点: `pnpm env` で入れた Node.js が、asdf の Node.js より先に使われていた
 
 ## 参照（一次情報）
 
