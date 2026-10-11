@@ -19,6 +19,7 @@
 #   2026-08-24 に Air の初回構築で 6 件（ddev/ddev, shivammathur/php, harelba/q,
 #   stripe/stripe-cli, golangci/tap, hashicorp/tap）がこの状態になっていたため削除した。
 #   いずれも対応 formula を core から外した際に tap 行だけ残していたもの。
+tap "anthropics/tap"
 tap "mongodb/brew", trusted: true
 tap "supabase/tap"
 brew "ack"
@@ -173,6 +174,7 @@ brew "zsh-completions"
 brew "zsh-git-prompt"
 brew "zstd"
 cask "alfred"
+cask "anthropics/tap/ant", trusted: true # Claude API の CLI。Revolution の ai-writer のローカルの認証 (ant auth login)
 cask "antigravity"
 cask "antigravity-cli"
 cask "appcleaner"
