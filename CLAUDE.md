@@ -86,7 +86,10 @@ interactive shells, so anything defined there never reaches a fresh non-interact
 - **Homebrew** - macOS package manager (`/opt/homebrew` for Apple Silicon)
 - **pnpm** - Node.js package manager. Note asdf shims come FIRST in PATH, so
   asdf-managed runtimes win; pnpm global tools (vercel etc.) are still reachable
-  because asdf does not manage them
+  because asdf does not manage them. pnpm itself is not managed by asdf: it updates
+  itself with `pnpm self-update`, and projects pin their version with `packageManager`.
+  Since pnpm 11, global commands (including pnpm) live in `$PNPM_HOME/bin`.
+  See `docs/pnpm-upgrade-and-global-cli.md`
 - **Composer** - PHP package manager
 
 ### Shell & Terminal
@@ -202,7 +205,7 @@ extract archive.tar.gz     # Auto-detect and extract
 
 ### Critical Paths
 - `GOPATH`: `$HOME/code`
-- `PNPM_HOME`: `$HOME/Library/pnpm` (appended after asdf shims, so asdf wins)
+- `PNPM_HOME`: `$HOME/Library/pnpm` (`$PNPM_HOME/bin` goes on PATH behind the asdf shims, so asdf wins)
 - `BREW_PREFIX`: `/opt/homebrew` (Apple Silicon)
 - `ANDROID_SDK_ROOT`: `$HOME/Library/Android/sdk`
 - `JAVA_HOME`: Set from Homebrew OpenJDK (the Android Studio branch was removed
@@ -212,7 +215,7 @@ extract archive.tar.gz     # Auto-detect and extract
 1. `$BREW_PREFIX/opt/openjdk/bin` (JAVA_HOME)
 2. `$HOME/.bun/bin`
 3. `$HOME/.asdf/shims` (asdf-managed runtimes — these win over pnpm)
-4. `$PNPM_HOME` (pnpm global packages)
+4. `$PNPM_HOME/bin` (pnpm and its global packages)
 2. `$HOME/bin`
 3. Homebrew bins
 4. asdf shims (Node.js, Ruby, Python, etc.)
