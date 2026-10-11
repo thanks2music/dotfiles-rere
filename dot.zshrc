@@ -151,8 +151,11 @@ fi
 # asdf init より前に配置することで、asdf shims が後から PATH 先頭に追加され
 # asdf で管理するランタイム（Node.js等）が pnpm より優先される。
 # pnpm グローバルツール（vercel等）は asdf 未管理のため引き続き参照可能。
+# pnpm 11 以降、グローバルのコマンド (pnpm 本体を含む) は $PNPM_HOME/bin に入る。
+# `pnpm setup` は末尾に別のブロックを足すので、実行したらそれを消してここ 1 か所にまとめる。
+# 経緯: docs/pnpm-upgrade-and-global-cli.md
 export PNPM_HOME="$HOME/Library/pnpm"
-export PATH="$PNPM_HOME:$PATH"
+export PATH="$PNPM_HOME/bin:$PATH"
 
 # asdf -------------------------------------------------------------------------
 # v0.16+ (Go binary): source ではなく PATH に shims を追加するだけでよい

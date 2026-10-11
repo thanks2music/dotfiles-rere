@@ -85,7 +85,10 @@ brew update && brew upgrade
 - **Homebrew** - macOSパッケージマネージャー（Apple Siliconでは`/opt/homebrew`）
 - **pnpm** - Node.js パッケージマネージャー。PATH では asdf shims が先に来るため
   asdf 管理のランタイムが勝つ。pnpm のグローバルツール (vercel 等) は asdf が
-  管理していないため引き続き参照できる
+  管理していないため引き続き参照できる。pnpm 本体も asdf では管理しない
+  (`pnpm self-update` で更新し、プロジェクトごとの版は `packageManager` で固定する)。
+  pnpm 11 以降、グローバルのコマンド (pnpm 本体を含む) は `$PNPM_HOME/bin` に入る。
+  詳細は `docs/pnpm-upgrade-and-global-cli.md`
 - **Composer** - PHPパッケージマネージャー
 
 ### シェル & ターミナル
@@ -201,7 +204,7 @@ extract archive.tar.gz     # 自動検出して展開
 
 ### 重要なパス
 - `GOPATH`: `$HOME/code`
-- `PNPM_HOME`: `$HOME/Library/pnpm`（asdf shims より後ろに追加されるため asdf が優先）
+- `PNPM_HOME`: `$HOME/Library/pnpm`（PATH には `$PNPM_HOME/bin` を asdf shims より後ろに置くため asdf が優先）
 - `BREW_PREFIX`: `/opt/homebrew`（Apple Silicon）
 - `ANDROID_SDK_ROOT`: `$HOME/Library/Android/sdk`
 - `JAVA_HOME`: Homebrew の OpenJDK から設定（Android Studio 分岐はマシン間で
@@ -211,7 +214,7 @@ extract archive.tar.gz     # 自動検出して展開
 1. `$BREW_PREFIX/opt/openjdk/bin`（JAVA_HOME）
 2. `$HOME/.bun/bin`
 3. `$HOME/.asdf/shims`（asdf 管理のランタイム。pnpm より優先される）
-4. `$PNPM_HOME`（pnpm グローバルパッケージ）
+4. `$PNPM_HOME/bin`（pnpm 本体とグローバルパッケージ）
 2. `$HOME/bin`
 3. Homebrew bins
 4. asdf shims（Node.js、Ruby、Pythonなど）
