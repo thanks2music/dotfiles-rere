@@ -41,7 +41,7 @@
         ]
       },
       "default_config_options": {
-        "effort": "xhigh",
+        "effort": "high",
         "fast": false,
         "mode": "auto",
         "model": "default"
