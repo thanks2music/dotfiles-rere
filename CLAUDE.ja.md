@@ -47,6 +47,9 @@ brew update && brew upgrade
 - `dot.*.local` → ローカル上書き設定（gitで追跡しない）
 - `bin/` → `~/bin`にシンボリックリンクされる実行スクリプト
 - `config/` → `~/.config`にシンボリックリンクされる設定ファイル
+- `tools/` → 手で、または git から実行する補助スクリプト（`~/bin` にはリンクしない）
+- `.gitattributes` → `config/zed/settings.json` に git の clean フィルタを割り当てる
+  （`tools/git-filter-zed-settings.sh`。何をするかと既定値の変え方はスクリプトの冒頭を参照）
 
 ### 設定の階層構造
 
