@@ -1,0 +1,3 @@
+# Zed がエージェントパネルの操作で書き換える値を、git に渡すときだけ既定値に揃える。
+# フィルタの中身: tools/git-filter-zed-settings.sh（登録は setup.sh の phase_zed）
+config/zed/settings.json filter=zed-agent-defaults

@@ -47,6 +47,9 @@ brew update && brew upgrade
 - `dot.*.local` → Local overrides (not tracked in git)
 - `bin/` → Executable scripts symlinked to `~/bin`
 - `config/` → Configuration files symlinked to `~/.config`
+- `tools/` → Helper scripts run by hand or by git (not linked to `~/bin`)
+- `.gitattributes` → Assigns a git clean filter to `config/zed/settings.json`
+  (`tools/git-filter-zed-settings.sh`; see its header for what it does and how to change the defaults)
 
 ### Configuration Layers
 

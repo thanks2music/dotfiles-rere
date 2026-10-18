@@ -146,7 +146,10 @@ function phase_vim {
 
 function phase_zed {
 	mkdir -p "$HOME/.config/zed" || return 1
-	link "$dotfiles_dir/config/zed/settings.json" "$HOME/.config/zed/settings.json"
+	link "$dotfiles_dir/config/zed/settings.json" "$HOME/.config/zed/settings.json" || return 1
+	# UI が書き換える値で差分が出ないようにする clean フィルタ（.gitattributes で割り当て済み）
+	git -C "$dotfiles_dir" config filter.zed-agent-defaults.clean "tools/git-filter-zed-settings.sh" ||
+		warn "git の clean フィルタを登録できなかった（Zed の設定は使える。差分にノイズが出るだけ）"
 }
 
 function phase_homebrew {
