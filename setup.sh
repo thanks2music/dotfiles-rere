@@ -131,17 +131,7 @@ function phase_examples {
 function phase_vim {
 	link "$dotfiles_dir/dot.vim" "$HOME/.config/nvim" || return 1
 	link "$dotfiles_dir/dot.vimrc" "$HOME/.config/nvim/init.vim" || return 1
-
-	if [ -f "$dotfiles_dir/dot.vim/autoload/plug.vim" ]; then
-		ok "vim-plug は既に導入済み"
-		return 0
-	fi
-	curl -fsSLo "$dotfiles_dir/dot.vim/autoload/plug.vim" --create-dirs \
-		https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim || {
-		warn "vim-plug の取得に失敗（後で :PlugInstall 前に再取得してください）"
-		return 0
-	}
-	info "vim-plug 導入"
+	# プラグインは nvim 組み込みの vim.pack が初回起動時に dot.vim/nvim-pack-lock.json の版で入れる
 }
 
 function phase_zed {

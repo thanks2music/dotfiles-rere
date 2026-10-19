@@ -25,9 +25,8 @@ cd ~/dotfiles
 3. `~/.config`ディレクトリの内容をリンク
 4. すべての`dot.*`ファイルをホームディレクトリにシンボリックリンク（`.filename`として）
 5. `dot.*.example`ファイルが存在しない場合はコピー
-6. Neovim設定をセットアップ
-7. Vim/Neovim用のvim-plugをインストール
-8. Homebrewをインストール（macOSのみ）
+6. Neovim設定をセットアップ（プラグインは初回起動時に`vim.pack`が入れる）
+7. Homebrewをインストール（macOSのみ）
 
 ### パッケージ管理
 ```bash
@@ -226,7 +225,7 @@ extract archive.tar.gz     # 自動検出して展開
 ## Vim/Neovim設定
 
 - メイン設定：`dot.vimrc`（`~/.config/nvim/init.vim`にシンボリックリンク）
-- プラグインマネージャー：vim-plug
+- プラグインマネージャー：`vim.pack`（Neovim 0.12 の組み込み）。版は`dot.vim/nvim-pack-lock.json`で固定し、`:lua vim.pack.update()`で更新する
 - 主なプラグイン：yankround、vim-surround、nerdcommenter、vim-prettier、vim-goimports
 
 ## シェル機能
