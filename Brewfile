@@ -109,8 +109,7 @@ brew "mongodb/brew/mongodb-community-shell", trusted: true
 brew "mongodb/brew/mongodb-database-tools"
 brew "mongosh"
 brew "multitail"
-brew "mysql", restart_service: :changed
-brew "mysql-client"
+brew "mysql-client" # サーバー（mysql）は入れない。ローカルの DB は各プロジェクトの Docker で本番と同じ版に揃える
 brew "neovim"
 brew "ni"
 brew "nkf"
