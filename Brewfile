@@ -156,6 +156,7 @@ brew "tnftp"
 brew "todoist-cli"
 brew "translate-shell"
 brew "tree"
+brew "tree-sitter-cli" # nvim-treesitter（main ブランチ）がパーサーのビルドに使う。formula の tree-sitter は 0.27 からライブラリだけになった
 brew "uv"
 brew "visidata"
 brew "watch"
