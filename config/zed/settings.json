@@ -21,7 +21,7 @@
     "minimum_contrast": 0
   },
   "session": {
-    "trust_all_worktrees": true
+    "trust_all_worktrees": false
   },
   "agent_servers": {
     "gemini": {
