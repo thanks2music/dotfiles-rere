@@ -25,9 +25,8 @@ The setup script performs:
 3. Links `~/.config` directory contents
 4. Symlinks all `dot.*` files to home directory (as `.filename`)
 5. Copies `dot.*.example` files if they don't exist
-6. Sets up Neovim configuration
-7. Installs vim-plug for Vim/Neovim
-8. Installs Homebrew (macOS only)
+6. Sets up Neovim configuration (plugins are installed by `vim.pack` on first launch)
+7. Installs Homebrew (macOS only)
 
 ### Package Management
 ```bash
@@ -227,7 +226,7 @@ extract archive.tar.gz     # Auto-detect and extract
 ## Vim/Neovim Configuration
 
 - Main config: `dot.vimrc` (symlinked to `~/.config/nvim/init.vim`)
-- Plugin manager: vim-plug
+- Plugin manager: `vim.pack` (built into Neovim 0.12). Versions are pinned in `dot.vim/nvim-pack-lock.json`; update with `:lua vim.pack.update()`
 - Notable plugins: yankround, vim-surround, nerdcommenter, vim-prettier, vim-goimports
 
 ## Shell Features

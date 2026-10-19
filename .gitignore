@@ -1,6 +1,7 @@
 .DS_Store
 *.local
 Brewfile.lock.json
+# vim-plug 時代の残骸。移行前から使っているマシンに残るため無視し続ける（vim.pack の実体は ~/.local/share/nvim/site/pack/）
 dot.vim/autoload/plug.vim
 dot.vim/plugged/
 dot.vim/init.vim
