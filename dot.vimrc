@@ -37,6 +37,7 @@ local builds = {
 }
 
 vim.api.nvim_create_autocmd('PackChanged', {
+  group = vim.api.nvim_create_augroup('PackBuild', { clear = true }),
   callback = function(ev)
     local name, kind = ev.data.spec.name, ev.data.kind
     local build = builds[name]
@@ -64,6 +65,34 @@ local function gh(repo)
   return 'https://github.com/' .. repo
 end
 
+-- Plugins that vim-plug loaded only for some filetypes ('for'). vim.pack has no
+-- such option, so they are packadd-ed on the first matching FileType instead.
+local by_filetype = {
+  ['vim-clang-format'] = { 'c', 'cpp', 'objc' },
+  ['auto-ctags.vim'] = { 'c', 'cpp' },
+  ['markdown-preview.nvim'] = { 'markdown' },
+}
+local lazy_group = vim.api.nvim_create_augroup('PackFiletype', { clear = true })
+
+local function load(plug)
+  local name = plug.spec.name
+  local filetypes = by_filetype[name]
+  if not filetypes then
+    vim.cmd.packadd({ name, bang = true })
+    return
+  end
+  vim.api.nvim_create_autocmd('FileType', {
+    group = lazy_group,
+    pattern = filetypes,
+    once = true,
+    callback = function(ev)
+      vim.cmd.packadd(name)
+      -- Re-run FileType so the plugin's ftplugin/autocmds see the current buffer.
+      vim.api.nvim_exec_autocmds('FileType', { buffer = ev.buf })
+    end,
+  })
+end
+
 vim.pack.add({
   -- Color scheme
   gh('chriskempson/base16-vim'),
@@ -72,7 +101,7 @@ vim.pack.add({
   gh('nvimdev/dashboard-nvim'),
 
   -- Syntax highlight
-  gh('nvim-treesitter/nvim-treesitter'),
+  { src = gh('nvim-treesitter/nvim-treesitter'), version = 'main' },
   gh('mustache/vim-mustache-handlebars'),
   gh('aklt/plantuml-syntax'),
   gh('ekalinin/Dockerfile.vim'),
@@ -140,7 +169,7 @@ vim.pack.add({
   gh('3rd/image.nvim'), -- required by nvim-neo-tree
   gh('google/vim-maktaba'), -- required by vim-bazel
   gh('godlygeek/tabular'), -- required by vim-markdown
-})
+}, { load = load })
 EOF
 "------------------------------------------------------------------------------
 " Color scheme
@@ -747,6 +776,7 @@ require('nvim-treesitter').install {
 local ts_disabled = { typescript = true, typescriptreact = true }
 
 vim.api.nvim_create_autocmd('FileType', {
+  group = vim.api.nvim_create_augroup('TreesitterHighlight', { clear = true }),
   callback = function(ev)
     if not ts_disabled[ev.match] then
       pcall(vim.treesitter.start, ev.buf)
