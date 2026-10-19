@@ -26,21 +26,14 @@ endif
 " Plugins (vim.pack: Neovim 0.12 built-in plugin manager)
 " Lockfile: nvim-pack-lock.json in this directory. Update with :lua vim.pack.update()
 lua << EOF
--- Build steps that vim-plug ran via 'do'. Registered before vim.pack.add() so
--- they also run on the first install.
-local builds = {
-  ['fzf'] = function() vim.fn['fzf#install']() end,
-  ['markdown-preview.nvim'] = function() vim.fn['mkdp#util#install']() end,
-  ['nvim-treesitter'] = function() vim.cmd('TSUpdate') end,
-  ['vimproc.vim'] = { 'make' },
-  ['vim-prettier'] = { 'npm', 'install', '--omit=dev' }, -- upstream README now recommends npm
-}
-
+-- Post-install/update build steps, declared per plugin as `data.build` in the
+-- specs below: a shell argv run in the plugin directory, or a Lua function.
+-- Registered before vim.pack.add() so they also run on the first install.
 vim.api.nvim_create_autocmd('PackChanged', {
   group = vim.api.nvim_create_augroup('PackBuild', { clear = true }),
   callback = function(ev)
-    local name, kind = ev.data.spec.name, ev.data.kind
-    local build = builds[name]
+    local spec, kind = ev.data.spec, ev.data.kind
+    local build = spec.data and spec.data.build
     if not build or (kind ~= 'install' and kind ~= 'update') then
       return
     end
@@ -48,13 +41,13 @@ vim.api.nvim_create_autocmd('PackChanged', {
       vim.system(build, { cwd = ev.data.path }, function(res)
         if res.code ~= 0 then
           vim.schedule(function()
-            vim.notify(('%s: `%s` failed\n%s'):format(name, table.concat(build, ' '), res.stderr), vim.log.levels.ERROR)
+            vim.notify(('%s: `%s` failed\n%s'):format(spec.name, table.concat(build, ' '), res.stderr), vim.log.levels.ERROR)
           end)
         end
       end)
     else
       if not ev.data.active then
-        vim.cmd.packadd(name)
+        vim.cmd.packadd(spec.name)
       end
       build()
     end
@@ -65,34 +58,6 @@ local function gh(repo)
   return 'https://github.com/' .. repo
 end
 
--- Plugins that vim-plug loaded only for some filetypes ('for'). vim.pack has no
--- such option, so they are packadd-ed on the first matching FileType instead.
-local by_filetype = {
-  ['vim-clang-format'] = { 'c', 'cpp', 'objc' },
-  ['auto-ctags.vim'] = { 'c', 'cpp' },
-  ['markdown-preview.nvim'] = { 'markdown' },
-}
-local lazy_group = vim.api.nvim_create_augroup('PackFiletype', { clear = true })
-
-local function load(plug)
-  local name = plug.spec.name
-  local filetypes = by_filetype[name]
-  if not filetypes then
-    vim.cmd.packadd({ name, bang = true })
-    return
-  end
-  vim.api.nvim_create_autocmd('FileType', {
-    group = lazy_group,
-    pattern = filetypes,
-    once = true,
-    callback = function(ev)
-      vim.cmd.packadd(name)
-      -- Re-run FileType so the plugin's ftplugin/autocmds see the current buffer.
-      vim.api.nvim_exec_autocmds('FileType', { buffer = ev.buf })
-    end,
-  })
-end
-
 vim.pack.add({
   -- Color scheme
   gh('chriskempson/base16-vim'),
@@ -101,7 +66,7 @@ vim.pack.add({
   gh('nvimdev/dashboard-nvim'),
 
   -- Syntax highlight
-  { src = gh('nvim-treesitter/nvim-treesitter'), version = 'main' },
+  { src = gh('nvim-treesitter/nvim-treesitter'), version = 'main', data = { build = function() vim.cmd('TSUpdate') end } },
   gh('mustache/vim-mustache-handlebars'),
   gh('aklt/plantuml-syntax'),
   gh('ekalinin/Dockerfile.vim'),
@@ -119,7 +84,7 @@ vim.pack.add({
 
   -- Finder
   gh('nvim-neo-tree/neo-tree.nvim'),
-  gh('junegunn/fzf'),
+  gh('junegunn/fzf'), -- Vim plugin only; the fzf binary comes from Homebrew
   gh('junegunn/fzf.vim'),
 
   -- Code completion
@@ -133,7 +98,7 @@ vim.pack.add({
   -- Debug
   gh('sebdah/vim-delve'),
   gh('thinca/vim-quickrun'),
-  gh('Shougo/vimproc.vim'),
+  { src = gh('Shougo/vimproc.vim'), data = { build = { 'make' } } },
 
   -- Lint
   gh('w0rp/ale'),
@@ -145,7 +110,7 @@ vim.pack.add({
   -- Format
   gh('rhysd/vim-clang-format'),
   gh('mattn/vim-goimports'),
-  gh('prettier/vim-prettier'),
+  { src = gh('prettier/vim-prettier'), data = { build = { 'npm', 'install', '--omit=dev' } } },
 
   -- Misc
   gh('ruanyl/vim-gh-line'),
@@ -161,7 +126,7 @@ vim.pack.add({
   gh('danro/rename.vim'),
   gh('thinca/vim-qfreplace'),
   gh('arthurxavierx/vim-caser'),
-  gh('iamcco/markdown-preview.nvim'),
+  { src = gh('iamcco/markdown-preview.nvim'), data = { build = function() vim.fn['mkdp#util#install']() end } },
 
   -- Dependence
   gh('MunifTanjim/nui.nvim'), -- required by nvim-neo-tree
@@ -169,7 +134,7 @@ vim.pack.add({
   gh('3rd/image.nvim'), -- required by nvim-neo-tree
   gh('google/vim-maktaba'), -- required by vim-bazel
   gh('godlygeek/tabular'), -- required by vim-markdown
-}, { load = load })
+})
 EOF
 "------------------------------------------------------------------------------
 " Color scheme
@@ -513,7 +478,11 @@ nnoremap qf :Qfreplace<CR>
 let g:vim_json_syntax_conceal = 0
 "------------------------------------------------------------------------------
 " auto-tags
-let g:auto_ctags = 1
+" Only regenerate tags when saving C/C++ (the plugin's BufWritePost hook is global).
+augroup AutoCtagsFiletype
+  autocmd!
+  autocmd BufEnter,FileType * let g:auto_ctags = index(['c', 'cpp'], &filetype) >= 0
+augroup END
 let g:auto_ctags_tags_args = '--tag-relative --recurse --sort=yes'
 "------------------------------------------------------------------------------
 " vim-vue
