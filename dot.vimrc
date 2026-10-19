@@ -23,90 +23,125 @@ if has("macunix")
   endif
 endif
 "------------------------------------------------------------------------------
-" Plugins
-call plug#begin('~/.vim/plugged')
+" Plugins (vim.pack: Neovim 0.12 built-in plugin manager)
+" Lockfile: nvim-pack-lock.json in this directory. Update with :lua vim.pack.update()
+lua << EOF
+-- Build steps that vim-plug ran via 'do'. Registered before vim.pack.add() so
+-- they also run on the first install.
+local builds = {
+  ['fzf'] = function() vim.fn['fzf#install']() end,
+  ['markdown-preview.nvim'] = function() vim.fn['mkdp#util#install']() end,
+  ['nvim-treesitter'] = function() vim.cmd('TSUpdate') end,
+  ['vimproc.vim'] = { 'make' },
+  ['vim-prettier'] = { 'npm', 'install', '--omit=dev' }, -- upstream README now recommends npm
+}
 
-" Color scheme
-Plug 'chriskempson/base16-vim'
+vim.api.nvim_create_autocmd('PackChanged', {
+  callback = function(ev)
+    local name, kind = ev.data.spec.name, ev.data.kind
+    local build = builds[name]
+    if not build or (kind ~= 'install' and kind ~= 'update') then
+      return
+    end
+    if type(build) == 'table' then
+      vim.system(build, { cwd = ev.data.path }, function(res)
+        if res.code ~= 0 then
+          vim.schedule(function()
+            vim.notify(('%s: `%s` failed\n%s'):format(name, table.concat(build, ' '), res.stderr), vim.log.levels.ERROR)
+          end)
+        end
+      end)
+    else
+      if not ev.data.active then
+        vim.cmd.packadd(name)
+      end
+      build()
+    end
+  end,
+})
 
-" Dashboard
-Plug 'nvimdev/dashboard-nvim'
+local function gh(repo)
+  return 'https://github.com/' .. repo
+end
 
-" Syntax highlight
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'mustache/vim-mustache-handlebars'
-Plug 'aklt/plantuml-syntax'
-Plug 'ekalinin/Dockerfile.vim'
-Plug 'plasticboy/vim-markdown'
-Plug 'vim-scripts/ShaderHighLight'
-Plug 'cespare/vim-toml'
-Plug 'posva/vim-vue'
-Plug 'hashivim/vim-terraform'
-Plug 'chr4/nginx.vim'
-Plug 'bazelbuild/vim-bazel'
-Plug 'bfontaine/Brewfile.vim'
-Plug 'mechatroner/rainbow_csv'
-Plug 'cespare/vim-go-templates'
-Plug 'mattn/vim-gomod'
-Plug 'aklt/plantuml-syntax'
+vim.pack.add({
+  -- Color scheme
+  gh('chriskempson/base16-vim'),
 
-" Finder
-Plug 'nvim-neo-tree/neo-tree.nvim'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
+  -- Dashboard
+  gh('nvimdev/dashboard-nvim'),
 
-" Code completion
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+  -- Syntax highlight
+  gh('nvim-treesitter/nvim-treesitter'),
+  gh('mustache/vim-mustache-handlebars'),
+  gh('aklt/plantuml-syntax'),
+  gh('ekalinin/Dockerfile.vim'),
+  gh('plasticboy/vim-markdown'),
+  gh('vim-scripts/ShaderHighLight'),
+  gh('cespare/vim-toml'),
+  gh('posva/vim-vue'),
+  gh('hashivim/vim-terraform'),
+  gh('chr4/nginx.vim'),
+  gh('bazelbuild/vim-bazel'),
+  gh('bfontaine/Brewfile.vim'),
+  gh('mechatroner/rainbow_csv'),
+  gh('cespare/vim-go-templates'),
+  gh('mattn/vim-gomod'),
 
-" Input support
-Plug 'kburdett/vim-nuuid'
-Plug 'LeafCage/yankround.vim'
-Plug 'scrooloose/nerdcommenter'
-" Plug 'kana/vim-smartinput'
+  -- Finder
+  gh('nvim-neo-tree/neo-tree.nvim'),
+  gh('junegunn/fzf'),
+  gh('junegunn/fzf.vim'),
 
-" Debug
-Plug 'sebdah/vim-delve'
-Plug 'thinca/vim-quickrun'
-Plug 'Shougo/vimproc.vim', {'do' : 'make'}
+  -- Code completion
+  { src = gh('neoclide/coc.nvim'), version = 'release' },
 
-" Lint
-Plug 'w0rp/ale'
+  -- Input support
+  gh('kburdett/vim-nuuid'),
+  gh('LeafCage/yankround.vim'),
+  gh('scrooloose/nerdcommenter'),
 
-" Line
-Plug 'nvim-lualine/lualine.nvim'
-Plug 'nvim-tree/nvim-web-devicons'
+  -- Debug
+  gh('sebdah/vim-delve'),
+  gh('thinca/vim-quickrun'),
+  gh('Shougo/vimproc.vim'),
 
-" Format
-Plug 'rhysd/vim-clang-format', { 'for': ['c', 'cpp', 'objc'] }
-Plug 'mattn/vim-goimports'
-Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+  -- Lint
+  gh('w0rp/ale'),
 
-" Misc
-Plug 'ruanyl/vim-gh-line'
-Plug 'vim-scripts/taglist.vim'
-Plug 'tpope/vim-rails'
-Plug 'tpope/vim-surround'
-Plug 'thinca/vim-poslist'
-" Plug 'thinca/vim-splash'
-Plug 'vim-scripts/matchit.zip'
-Plug 'thinca/vim-singleton'
-Plug 'thinca/vim-localrc'
-Plug 'tpope/vim-projectionist'
-Plug 'soramugi/auto-ctags.vim', { 'for': ['c', 'cpp'] }
-Plug 'danro/rename.vim'
-Plug 'thinca/vim-qfreplace'
-Plug 'arthurxavierx/vim-caser'
-Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+  -- Line
+  gh('nvim-lualine/lualine.nvim'),
+  gh('nvim-tree/nvim-web-devicons'),
 
-" Dependence
-Plug 'MunifTanjim/nui.nvim' " required by nvim-neo-tree
-Plug 'nvim-lua/plenary.nvim' " required by nvim-neo-tree
-Plug 'nvim-tree/nvim-web-devicons' " required by nvim-neo-tree
-Plug '3rd/image.nvim' " required by nvim-neo-tree
-Plug 'google/vim-maktaba' " required by vim-bazel
-Plug 'godlygeek/tabular' " required by vim-markdown
+  -- Format
+  gh('rhysd/vim-clang-format'),
+  gh('mattn/vim-goimports'),
+  gh('prettier/vim-prettier'),
 
-call plug#end()
+  -- Misc
+  gh('ruanyl/vim-gh-line'),
+  gh('vim-scripts/taglist.vim'),
+  gh('tpope/vim-rails'),
+  gh('tpope/vim-surround'),
+  gh('thinca/vim-poslist'),
+  gh('vim-scripts/matchit.zip'),
+  gh('thinca/vim-singleton'),
+  gh('thinca/vim-localrc'),
+  gh('tpope/vim-projectionist'),
+  gh('soramugi/auto-ctags.vim'),
+  gh('danro/rename.vim'),
+  gh('thinca/vim-qfreplace'),
+  gh('arthurxavierx/vim-caser'),
+  gh('iamcco/markdown-preview.nvim'),
+
+  -- Dependence
+  gh('MunifTanjim/nui.nvim'), -- required by nvim-neo-tree
+  gh('nvim-lua/plenary.nvim'), -- required by nvim-neo-tree
+  gh('3rd/image.nvim'), -- required by nvim-neo-tree
+  gh('google/vim-maktaba'), -- required by vim-bazel
+  gh('godlygeek/tabular'), -- required by vim-markdown
+})
+EOF
 "------------------------------------------------------------------------------
 " Color scheme
 syntax enable
@@ -688,7 +723,7 @@ require('dashboard').setup {
       enable = true,
     },
     shortcut = {
-      { desc = '󰊳 Update', group = '@property', action = 'Lazy update', key = 'u' },
+      { desc = '󰊳 Update', group = '@property', action = 'lua vim.pack.update()', key = 'u' },
       { desc = ' Files', group = 'Label', action = 'Telescope find_files', key = 'f' },
       { desc = '󰈚 Recent', group = 'Label', action = 'Telescope oldfiles', key = 'r' },
       { desc = '󰒲 Config', group = 'Number', action = 'edit ~/.config/nvim/init.lua', key = 'c' },
@@ -700,14 +735,24 @@ EOF
 
 " nvim-treesitter
 lua <<EOF
-require'nvim-treesitter.configs'.setup {
-  highlight = {
-    enable = true,
-    disable = {},
-  },
-  ensure_installed = 'all',
-  ignore_install = { 'haskell', 'typescript', 'elixir' }
+-- main branch: parsers are installed explicitly, highlighting is started by Neovim itself.
+require('nvim-treesitter').install {
+  'bash', 'css', 'diff', 'dockerfile', 'git_config', 'gitcommit', 'go', 'gomod',
+  'hcl', 'html', 'javascript', 'json', 'lua', 'make', 'markdown',
+  'markdown_inline', 'php', 'python', 'ruby', 'scss', 'sql', 'terraform', 'toml',
+  'vim', 'vimdoc', 'vue', 'yaml',
 }
+
+-- TypeScript keeps the regex syntax (treesitter highlighting was disabled for it before).
+local ts_disabled = { typescript = true, typescriptreact = true }
+
+vim.api.nvim_create_autocmd('FileType', {
+  callback = function(ev)
+    if not ts_disabled[ev.match] then
+      pcall(vim.treesitter.start, ev.buf)
+    end
+  end,
+})
 EOF
 
 " lualine
@@ -754,4 +799,3 @@ require('lualine').setup {
 }
 END
 
-autocmd BufEnter,BufWinEnter,WinEnter *ts,*.tsx TSBufDisable highlight
