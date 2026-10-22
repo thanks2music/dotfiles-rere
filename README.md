@@ -14,9 +14,9 @@ Originally based on [shiwano/dotfiles](https://github.com/shiwano/dotfiles).
 |---|---|---|
 | `dot.*` | `~/.*` (symlink) | zsh, git, tmux, Vim / Neovim, ... |
 | `dot.*.example` | `~/.*` (copied if missing) | Templates for machine-specific files |
-| `config/*` | `~/.config/*` (symlink) | Alacritty, fish, ... (Zed: `settings.json` only) |
+| `config/*` | `~/.config/*` (symlink) | Alacritty, fish, ... |
 | `bin/*` | `~/bin/*` (symlink) | Small helper scripts |
-| `Brewfile*` | `~/.Brewfile` (core only, symlink) | Homebrew bundles: core (installed by `setup.sh`), desktop, VS Code, App Store |
+| `Brewfile*` | `~/.Brewfile` (core, symlink) | Homebrew bundles. `setup.sh` installs the core one; the rest are opt-in |
 
 Machine-specific settings and secrets go in `*.local` files, which git ignores.
 
