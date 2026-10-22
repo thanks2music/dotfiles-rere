@@ -3,7 +3,7 @@
 > *"Insanity is doing the same thing over and over and expecting different results."*
 >
 > `setup.sh` is idempotent: run it over and over and you get the same result. So we're sane.
-> (Einstein never said it, by the way.)
+> (Einstein [never said it](https://quoteinvestigator.com/2017/03/23/same/), by the way.)
 
 macOS (Apple Silicon) dotfiles by [@thanks2music](https://github.com/thanks2music), maintained since 2011.
 Originally based on [shiwano/dotfiles](https://github.com/shiwano/dotfiles).
