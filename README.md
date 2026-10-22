@@ -14,11 +14,11 @@ Originally based on [shiwano/dotfiles](https://github.com/shiwano/dotfiles).
 |---|---|---|
 | `dot.*` | `~/.*` (symlink) | zsh, git, tmux, Vim / Neovim, ... |
 | `dot.*.example` | `~/.*` (copied if missing) | Templates for machine-specific files |
-| `config/*` | `~/.config/*` (symlink) | Alacritty, fish, Zed, ... |
+| `config/*` | `~/.config/*` (symlink) | Alacritty, fish, ... (Zed: `settings.json` only) |
 | `bin/*` | `~/bin/*` (symlink) | Small helper scripts |
-| `Brewfile*` | — | Homebrew bundles: core (installed by `setup.sh`), desktop, VS Code, App Store |
+| `Brewfile*` | `~/.Brewfile` (core only, symlink) | Homebrew bundles: core (installed by `setup.sh`), desktop, VS Code, App Store |
 
-Machine-specific settings and secrets go in `dot.*.local` files, which git ignores.
+Machine-specific settings and secrets go in `*.local` files, which git ignores.
 
 ## Install
 
@@ -33,7 +33,7 @@ Piping through `curl` is intentionally not documented here. You cannot inspect t
 script before it runs, and `setup.sh` clones this repository anyway — so cloning
 first is strictly better. See the note at the top of `setup.sh`.
 
-`setup.sh` is idempotent: phases that already completed report `ok`. It exits
+Re-running is safe: phases that already completed report `ok`. It exits
 non-zero if any phase failed **or was skipped**, so read the summary rather than
 treating a non-zero exit as a failure on its own.
 
