@@ -37,6 +37,10 @@
 #     - CLI だけの cask（.app が無いもの）は「判定不可」とし、本体の atime を参考に出すだけにする。
 #       atime は brew upgrade で入れ替わった時点に戻るうえ、Spotlight が読んでも更新される
 #       （flutter の dart は一度も実行していないのに、Spotlight が多数のアプリを登録し直した日の atime だった）。
+#     - ディレクトリは自身と直下の子までしか見ない（Chrome のプロファイルのような巨大な木を辿らないため）。
+#       深い階層のファイルだけを書き換えるアプリは、実際より古く見えることがある。
+#     - mas のアプリと pkg の .app は Spotlight（mdfind）で探す。索引が使えないと見つからないので、
+#       その場合は冒頭に警告を出す。
 #     - formula と VS Code 拡張には使った記録が無いため対象外にし、件数だけ表示する。
 #     - 他のアプリの Containers を読むため、macOS がターミナルに「他のアプリのデータへのアクセス」の許可を求めることがある。
 set -uo pipefail
@@ -139,7 +143,8 @@ def pkg_apps(pkgids):
 
     receipt の location は、インストーラが後から .app を動かすと実際の場所とずれる
     （hhkb は tmp/ に展開してから移す。microsoft-teams は自動更新の複製先を指す）。
-    そのため /Applications 直下の同名も候補に入れる。
+    そのため /Applications 直下の同名と、/Applications・~/Applications の下にある同名も候補に入れる。
+    範囲を絞るのは、Parallels が ~/Applications (Parallels) に作る同名の別物を拾わないため。
     """
     out = []
     for pid in pkgids:
@@ -150,7 +155,10 @@ def pkg_apps(pkgids):
         base = os.path.join(meta['volume'], meta.get('location', ''))
         for f in run('pkgutil', '--only-dirs', '--files', pid).splitlines():
             if f.endswith('.app') and '.app/' not in f:
-                out += [os.path.join(base, f), os.path.join('/Applications', os.path.basename(f))]
+                name = os.path.basename(f)
+                out += [os.path.join(base, f), os.path.join('/Applications', name)]
+                out += run('mdfind', '-onlyin', '/Applications', '-onlyin', os.path.expanduser('~/Applications'),
+                           'kMDItemFSName == "%s"' % name).splitlines()
     return out
 
 
@@ -170,19 +178,20 @@ def cask_targets(c):
     return apps + pkg_apps(pkgids), bins, font
 
 
-def cask_info(names):
-    """brew info の結果を {token: JSON} で返す。引けない cask は含めない。"""
-    r = subprocess.run(['brew', 'info', '--cask', '--json=v2'] + names, capture_output=True, text=True)
+def installed_casks():
+    """このマシンに入っている cask を {token: JSON} で返す。
+
+    名前を並べて問い合わせると、1 件でも引けない cask があるだけで exit 1・stdout 空になり、
+    全部が判定できなくなる。--installed なら名前に依存せず 1 回で済む（約 2 秒）。
+    """
+    r = subprocess.run(['brew', 'info', '--cask', '--json=v2', '--installed'],
+                       capture_output=True, text=True)
     try:
         return {c['token']: c for c in json.loads(r.stdout).get('casks', [])}
     except ValueError:
-        if len(names) == 1:
-            return {}
-    # 1 件でも引けない cask があると、一括の問い合わせは何も返さない（exit 1・stdout 空）。1 件ずつ引き直す
-    info = {}
-    for n in names:
-        info.update(cask_info([n]))
-    return info
+        print("ERROR: brew info --installed が JSON を返さなかった: %s"
+              % (r.stderr.strip().splitlines() or [''])[0])
+        return {}
 
 
 def day(ts):
@@ -203,13 +212,10 @@ def judge(name, signals, note=''):
 
 
 if casks:
-    info = cask_info(casks)
+    info = installed_casks()
     for full in casks:
         c = info.get(full.split('/')[-1])
         if not c:
-            rows.append(('判定不可', '-', 'brew info で引けない（tools/brewfile-audit.sh で確かめる）', full))
-            continue
-        if not c.get('installed'):
             rows.append(('未導入', '-', 'このマシンに入っていない', full))
             continue
         apps, bins, font = cask_targets(c)
@@ -250,6 +256,10 @@ title = {
     '未導入': 'このマシンに入っていない',
     '最近': '%d 日以内に痕跡あり' % days,
 }
+if run('mdfind', '-onlyin', '/Applications', '-count',
+       "kMDItemContentType == 'com.apple.application-bundle'") in ('', '0'):
+    print("⚠ Spotlight の索引が使えない（/Applications のアプリが 1 件も見つからない）。"
+          "mas の判定と Spotlight の痕跡は当てにならない。\n")
 print("%s — cask %d 件 / mas %d 件（基準: %s より前）"
       % (os.path.basename(path), len(casks), len(mas_apps), day(cutoff)))
 for k in order:
