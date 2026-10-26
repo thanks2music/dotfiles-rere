@@ -16,12 +16,13 @@
 #   外すかどうかは、結果を見て人が決める。
 #
 #   判定に使う痕跡（いちばん新しいものを採る）:
-#     1. Spotlight の kMDItemLastUsedDate（mdls）
+#     1. Spotlight の kMDItemLastUsedDate（/Applications と ~/Applications の .app を mdfind 1 回でまとめて引く）
 #     2. ~/Library 配下にある、その bundle id の設定（Preferences）・終了時の状態
 #        （Saved Application State）・データ（Application Support / Caches / HTTPStorages）の更新日時。
 #        サンドボックスのアプリは ~/Library/Containers/<bundle id> の中を見る
 #     3. brew 上はインストール済みなのに .app が無い → 手で消した = 使っていない強い根拠。
-#        pkg で入る cask は、pkgutil の receipt から .app の場所を割り出す
+#        pkg で入る cask は、pkgutil の receipt から .app を割り出す。宣言や receipt の場所に無い .app は、
+#        同じ名前の .app を Spotlight の索引から探す（Utilities などへ移された場合）
 #
 #   ⚠️ macOS には、アプリの起動を 1 年分残すログが無い。上の痕跡はどれも近似で、それぞれ穴がある:
 #     - kMDItemLastUsedDate は LaunchServices 経由で開いた時だけ更新される。Apple の定義:
@@ -39,7 +40,7 @@
 #       （flutter の dart は一度も実行していないのに、Spotlight が多数のアプリを登録し直した日の atime だった）。
 #     - ディレクトリは自身と直下の子までしか見ない（Chrome のプロファイルのような巨大な木を辿らないため）。
 #       深い階層のファイルだけを書き換えるアプリは、実際より古く見えることがある。
-#     - mas のアプリと pkg の .app は Spotlight（mdfind）で探す。索引が使えないと見つからないので、
+#     - .app の索引と mas のアプリは Spotlight（mdfind）頼み。索引が使えないと見つからないので、
 #       その場合は冒頭に警告を出す。
 #     - formula と VS Code 拡張には使った記録が無いため対象外にし、件数だけ表示する。
 #     - 他のアプリの Containers を読むため、macOS がターミナルに「他のアプリのデータへのアクセス」の許可を求めることがある。
@@ -75,39 +76,64 @@ def run(*cmd):
     return subprocess.run(cmd, capture_output=True, text=True).stdout.strip()
 
 
+def date_of(v):
+    """mdls / mdfind の日付（"2026-10-26 10:04:56 +0000"）を時刻にする。"(null)" は 0。"""
+    try:
+        return datetime.datetime.strptime(v, '%Y-%m-%d %H:%M:%S %z').timestamp()
+    except ValueError:
+        return 0
+
+
+# /Applications と ~/Applications の .app の索引（パス → (最終使用, App Store の ID)）を mdfind 1 回で作る。
+# Parallels が ~/Applications (Parallels) に作る同名の別物は範囲外。他の .app の中に入れ子の .app は除く。
+SPOT = {}
+for line in run('mdfind', '-onlyin', '/Applications', '-onlyin', os.path.expanduser('~/Applications'),
+                '-attr', 'kMDItemLastUsedDate', '-attr', 'kMDItemAppStoreAdamID',
+                "kMDItemContentType == 'com.apple.application-bundle'").splitlines():
+    m = re.match(r'(.+?) {3}kMDItemLastUsedDate = (.*?) {3}kMDItemAppStoreAdamID = (.*)$', line)
+    if m and '.app/' not in m.group(1):
+        SPOT[m.group(1)] = (date_of(m.group(2)), m.group(3))
+BY_NAME = {}
+for p in SPOT:
+    BY_NAME.setdefault(os.path.basename(p), []).append(p)
+BY_ADAM = {adam: p for p, (_, adam) in SPOT.items() if adam != '(null)'}
+
+
+def locate(p):
+    """.app の候補パスを実在するパスにする。無ければ索引から同じ名前の .app を探す。"""
+    return [p] if os.path.isdir(p) else BY_NAME.get(os.path.basename(p), [])
+
+
 def newest(p):
     """ファイルならその mtime、ディレクトリなら自身と直下の子の mtime の最大値。無ければ 0。"""
     try:
         best = os.stat(p).st_mtime
     except OSError:
         return 0
-    if os.path.isdir(p):
-        try:
-            for e in os.scandir(p):
-                if e.name in IGNORE:
-                    continue
-                try:
-                    best = max(best, e.stat(follow_symlinks=False).st_mtime)
-                except OSError:
-                    pass
-        except OSError:
-            pass
+    try:
+        for e in os.scandir(p):         # ファイルなら NotADirectoryError で抜ける
+            if e.name in IGNORE:
+                continue
+            try:
+                best = max(best, e.stat(follow_symlinks=False).st_mtime)
+            except OSError:
+                pass
+    except OSError:
+        pass
     return best
 
 
 def spotlight(app):
-    v = run('mdls', '-raw', '-name', 'kMDItemLastUsedDate', app)
-    try:
-        return datetime.datetime.strptime(v, '%Y-%m-%d %H:%M:%S %z').timestamp()
-    except ValueError:
-        return 0        # "(null)" = Spotlight に記録が無い
+    if app in SPOT:
+        return SPOT[app][0]
+    return date_of(run('mdls', '-raw', '-name', 'kMDItemLastUsedDate', app))     # 索引の外（/Library 配下など）
 
 
 def bundle_id(app):
     try:
         with open(os.path.join(app, 'Contents', 'Info.plist'), 'rb') as f:
             return plistlib.load(f).get('CFBundleIdentifier')
-    except (OSError, ValueError, plistlib.InvalidFileException):
+    except (OSError, ValueError):       # plistlib.InvalidFileException は ValueError の子
         return None
 
 
@@ -117,13 +143,14 @@ def app_signals(app):
     bid = bundle_id(app)
     if not bid:
         return out
-    name = os.path.basename(app)[:-len('.app')]
     box = os.path.join(LIB, 'Containers', bid, 'Data', 'Library')
-    out.append((max(newest(os.path.join(LIB, 'Preferences', bid + '.plist')),
-                    newest(os.path.join(box, 'Preferences', bid + '.plist'))), '設定'))
-    out.append((max(newest(os.path.join(LIB, 'Saved Application State', bid + '.savedState')),
-                    newest(os.path.join(box, 'Saved Application State', bid + '.savedState'))),
-                '終了時の状態'))
+
+    def both(*rel):     # ~/Library と、サンドボックスの Containers の中の同じ場所
+        return max(newest(os.path.join(LIB, *rel)), newest(os.path.join(box, *rel)))
+
+    name = os.path.basename(app)[:-len('.app')]
+    out.append((both('Preferences', bid + '.plist'), '設定'))
+    out.append((both('Saved Application State', bid + '.savedState'), '終了時の状態'))
     out.append((max(newest(os.path.join(LIB, 'Application Support', bid)),
                     newest(os.path.join(LIB, 'Application Support', name)),
                     newest(os.path.join(box, 'Application Support')),
@@ -132,19 +159,12 @@ def app_signals(app):
     return out
 
 
-def flat(v):
-    if isinstance(v, str):
-        return [v]
-    return [x for i in (v or []) for x in flat(i)]
-
-
 def pkg_apps(pkgids):
-    """pkgutil の receipt から、pkg が置いた .app（の最上位）のパスを返す。
+    """pkgutil の receipt に記録された .app（の最上位）のパスを返す。
 
     receipt の location は、インストーラが後から .app を動かすと実際の場所とずれる
     （hhkb は tmp/ に展開してから移す。microsoft-teams は自動更新の複製先を指す）。
-    そのため /Applications 直下の同名と、/Applications・~/Applications の下にある同名も候補に入れる。
-    範囲を絞るのは、Parallels が ~/Applications (Parallels) に作る同名の別物を拾わないため。
+    実際の場所は locate() が索引の同名から探す。
     """
     out = []
     for pid in pkgids:
@@ -153,12 +173,8 @@ def pkg_apps(pkgids):
         if 'volume' not in meta:
             continue                    # receipt が無い
         base = os.path.join(meta['volume'], meta.get('location', ''))
-        for f in run('pkgutil', '--only-dirs', '--files', pid).splitlines():
-            if f.endswith('.app') and '.app/' not in f:
-                name = os.path.basename(f)
-                out += [os.path.join(base, f), os.path.join('/Applications', name)]
-                out += run('mdfind', '-onlyin', '/Applications', '-onlyin', os.path.expanduser('~/Applications'),
-                           'kMDItemFSName == "%s"' % name).splitlines()
+        out += [os.path.join(base, f) for f in run('pkgutil', '--only-dirs', '--files', pid).splitlines()
+                if f.endswith('.app') and '.app/' not in f]
     return out
 
 
@@ -173,8 +189,8 @@ def cask_targets(c):
         if 'font' in a:
             font = True
         for d in a.get('uninstall', []):
-            if isinstance(d, dict):
-                pkgids += flat(d.get('pkgutil'))
+            p = d.get('pkgutil') if isinstance(d, dict) else None
+            pkgids += [p] if isinstance(p, str) else (p or [])
     return apps + pkg_apps(pkgids), bins, font
 
 
@@ -201,10 +217,10 @@ def day(ts):
 rows = []       # (区分, 日付, 根拠, 名前)
 
 
-def judge(name, signals, note=''):
-    ts, why = max(signals) if signals else (0, '')
+def judge(name, signals):
+    ts, why = max(signals)
     if not ts:
-        rows.append(('痕跡なし', '-', note or '設定・データ・Spotlight のどれにも無い', name))
+        rows.append(('痕跡なし', '-', '設定・データ・Spotlight のどれにも無い', name))
     elif ts < cutoff:
         rows.append(('古い', day(ts), why, name))
     else:
@@ -219,16 +235,18 @@ if casks:
             rows.append(('未導入', '-', 'このマシンに入っていない', full))
             continue
         apps, bins, font = cask_targets(c)
-        found = [a for a in dict.fromkeys(apps) if os.path.isdir(a)]
-        if apps and not found:      # cask 側で .app 名が変わった場合（zen: Zen Browser.app → Zen.app）
-            found = [a for a in ('/Applications/%s.app' % n for n in c.get('name', []))
-                     if os.path.isdir(a)]
+        found = list(dict.fromkeys(p for a in apps for p in locate(a)))
+        if apps and not found:
+            # brew info は「今の」cask 定義を返すため、自分で更新する（auto_updates の）cask は、入れた時と
+            # .app 名がずれることがある（zen: 入れたのは Zen Browser.app、今の定義は Zen.app）。
+            # 表示名が昔の .app 名と同じ時だけ、ここで拾える。
+            found = list(dict.fromkeys(p for n in c.get('name', []) for p in locate('/Applications/%s.app' % n)))
         if font:
             rows.append(('判定不可', '-', 'フォント（設定から参照されているかを見る）', full))
         elif apps and not found:
             rows.append(('.app 削除済み', '-', 'brew はインストール済みとしているのに .app が無い', full))
         elif found:
-            judge(full, [s for a in found for s in app_signals(a) if s[0]])
+            judge(full, [s for a in found for s in app_signals(a)])
         else:
             atimes = []
             for b in bins:
@@ -241,14 +259,13 @@ if casks:
                          else '.app の場所が分からない', full))
 
 for name, adam in mas_apps:
-    hits = run('mdfind', '-onlyin', '/Applications', 'kMDItemAppStoreAdamID == %s' % adam).splitlines()
-    if not hits:
+    app = BY_ADAM.get(adam)
+    if not app:
         rows.append(('未導入', '-', 'このマシンに入っていない', name))
         continue
-    judge(name, [s for s in app_signals(hits[0]) if s[0]])
+    judge(name, app_signals(app))
 
-order = ['.app 削除済み', '痕跡なし', '古い', '判定不可', '未導入', '最近']
-title = {
+title = {       # 表示する順
     '.app 削除済み': '.app 削除済み（外す候補）',
     '痕跡なし': '痕跡なし（外す候補。CLI からしか起動しないものは除く）',
     '古い': '%d 日以上前の痕跡しか無い（外す候補）' % days,
@@ -256,17 +273,16 @@ title = {
     '未導入': 'このマシンに入っていない',
     '最近': '%d 日以内に痕跡あり' % days,
 }
-if run('mdfind', '-onlyin', '/Applications', '-count',
-       "kMDItemContentType == 'com.apple.application-bundle'") in ('', '0'):
+if not SPOT:
     print("⚠ Spotlight の索引が使えない（/Applications のアプリが 1 件も見つからない）。"
-          "mas の判定と Spotlight の痕跡は当てにならない。\n")
+          ".app の場所・mas の判定・Spotlight の痕跡は当てにならない。\n")
 print("%s — cask %d 件 / mas %d 件（基準: %s より前）"
       % (os.path.basename(path), len(casks), len(mas_apps), day(cutoff)))
-for k in order:
+for k, t in title.items():
     sel = sorted((r for r in rows if r[0] == k), key=lambda r: (r[1], r[3]))
     if not sel:
         continue
-    print("\n==> %s: %d 件" % (title[k], len(sel)))
+    print("\n==> %s: %d 件" % (t, len(sel)))
     for _, d, why, name in sel:
         print("    %-10s  %-34s %s" % (d, name, why))
 if n_brew or n_vscode:
