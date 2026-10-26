@@ -4,8 +4,14 @@
 #   brew bundle install --file=~/dotfiles/Brewfile.desktop
 #
 # 持ち運び機（Air）には入れない。
-# BOSS 判断: mamp / local / phpstorm は前々職の遺産で現在未使用（Pro からも後日削除予定）。
-#            Xcode は Air では Command Line Tools のみ入れる。
+# Xcode は Air では Command Line Tools のみ入れる。
+#
+# 意図的に外した cask（2026-10-27 の棚卸し）。Pro にはまだ入っているので `brew bundle dump` には出てくるが、
+#   差分を反映するときに戻さない。使っているかは `bash tools/brewfile-usage.sh` で確かめた。
+#   .app を削除済み:      adobe-digital-editions（Rosetta 2 も必須だった） aqua-voice chatgpt chatgpt-atlas
+#                         phpstorm tor-browser vivaldi
+#   1 年以上使っていない: microsoft-edge minecraft steam zen
+#   使っていない:         cursor warp local mamp（local と mamp は前々職の遺産）
 
 brew "ideviceinstaller"
 brew "ios-deploy"
@@ -13,27 +19,8 @@ brew "libimobiledevice"
 brew "mingw-w64"
 brew "openvino"
 cask "adobe-creative-cloud"
-cask "aqua-voice"
 cask "blackhole-16ch"
 cask "blackhole-2ch"
-cask "chatgpt"
-cask "chatgpt-atlas"
-cask "cursor"
 cask "handbrake-app"
 cask "kiro-cli"
-cask "local"
-cask "mamp"
-cask "microsoft-edge"
-cask "minecraft"
-cask "phpstorm"
-cask "steam"
-cask "tor-browser"
-cask "vivaldi"
-cask "warp"
-cask "zen"
 mas "Xcode", id: 497799835
-
-# Rosetta 2 を必須とするため、素の Apple Silicon 機では installer が必ず失敗する
-#   （2026-08-24 に Air で実測: "This package requires Rosetta 2 to be installed"）。
-#   Pro では Rosetta が既に入っているため動くが、core に置くと新機の構築を止める。
-cask "adobe-digital-editions"
