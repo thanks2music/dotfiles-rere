@@ -8,8 +8,11 @@
 #     bash tools/brewfile-usage.sh Brewfile.desktop
 #     bash tools/brewfile-usage.sh Brewfile.mas 180   # 180 日より前を「古い」とする（既定 365）
 #
-#   何も入れない・消さない（読むだけ）。結果は参考情報なので、常に exit 0 で終わる
-#   （tools/brewfile-audit.sh のように brew bundle を止める問題を検出するものではない）。
+#   何も入れない・消さない（読むだけ）。結果は参考情報なので、判定の結果では失敗にしない（exit 0）。
+#   tools/brewfile-audit.sh のように brew bundle を止める問題を検出するものではない。
+#   引数の誤りや前提の不足（Brewfile が無い・macOS でない・brew が無い）だけ exit 1 / 2 で止める。
+#   .app の場所は `brew info --json=v2` の artifacts の target から取るため、Homebrew 5.1.13 以降が要る
+#   （それより前の brew には target が無く、.app のある cask が「判定不可」になる）。
 #   外すかどうかは、結果を見て人が決める。
 #
 #   判定に使う痕跡（いちばん新しいものを採る）:
@@ -167,6 +170,21 @@ def cask_targets(c):
     return apps + pkg_apps(pkgids), bins, font
 
 
+def cask_info(names):
+    """brew info の結果を {token: JSON} で返す。引けない cask は含めない。"""
+    r = subprocess.run(['brew', 'info', '--cask', '--json=v2'] + names, capture_output=True, text=True)
+    try:
+        return {c['token']: c for c in json.loads(r.stdout).get('casks', [])}
+    except ValueError:
+        if len(names) == 1:
+            return {}
+    # 1 件でも引けない cask があると、一括の問い合わせは何も返さない（exit 1・stdout 空）。1 件ずつ引き直す
+    info = {}
+    for n in names:
+        info.update(cask_info([n]))
+    return info
+
+
 def day(ts):
     return datetime.date.fromtimestamp(ts).isoformat()
 
@@ -185,17 +203,11 @@ def judge(name, signals, note=''):
 
 
 if casks:
-    r = subprocess.run(['brew', 'info', '--cask', '--json=v2'] + casks, capture_output=True, text=True)
-    try:
-        info = {c['token']: c for c in json.loads(r.stdout).get('casks', [])}
-    except ValueError:
-        info = {}
-        print("ERROR: brew info が JSON を返さなかった: %s"
-              % (r.stderr.strip().splitlines() or [''])[0])
+    info = cask_info(casks)
     for full in casks:
         c = info.get(full.split('/')[-1])
         if not c:
-            rows.append(('判定不可', '-', 'brew info で引けない', full))
+            rows.append(('判定不可', '-', 'brew info で引けない（tools/brewfile-audit.sh で確かめる）', full))
             continue
         if not c.get('installed'):
             rows.append(('未導入', '-', 'このマシンに入っていない', full))
