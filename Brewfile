@@ -178,8 +178,9 @@ brew "zstd"
 #   .app を削除済み:      bartender clipy dbeaver-community github gitify gyazo keyboard-cleaner poedit smartsvn
 #   1 年以上使っていない: bruno deepl flutter（普段は fvm 経由） switchhosts typora whatsapp
 #   使っていない:         daisydisk divvy ghostty hammerspoon ip-in-menu-bar licecap onyx pgadmin4 teamviewer
-#   どの設定からも参照していないフォント: font-iosevka-nerd-font font-monoid-nerd-font font-moralerspace
-#                         font-sauce-code-pro-nerd-font font-terminess-ttf-nerd-font font-victor-mono-nerd-font
+#   使っているアプリの設定から参照していないフォント: font-iosevka-nerd-font font-monoid-nerd-font
+#                         font-moralerspace font-terminess-ttf-nerd-font font-victor-mono-nerd-font
+#                         font-sauce-code-pro-nerd-font（config/alacritty だけが参照。Alacritty 本体は入れていない）
 #   Brewfile.vscode へ移した: visual-studio-code
 cask "alfred"
 cask "anthropics/tap/ant", trusted: true # Claude API の CLI。Revolution の ai-writer のローカルの認証 (ant auth login)
