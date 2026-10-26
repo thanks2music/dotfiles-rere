@@ -10,6 +10,8 @@
 # 更新手順:
 #   brew bundle dump --force --file=/tmp/bf && 目視レビューして反映
 #   （dump は一度きりの実験や事故インストールもそのまま拾うため、必ず差分を見る）
+#   ⚠️ `brew bundle cleanup`（--global を含む）は使わない。Brewfile を 4 本に分けているため、
+#      desktop / mas / vscode に書いたもの（VS Code 本体と拡張を含む）まで削除対象になる。
 #
 # 検証: brew bundle check --file=Brewfile
 
