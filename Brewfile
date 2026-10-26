@@ -5,7 +5,7 @@
 #
 # 分離の理由:
 #   Brewfile.desktop — 重量級・Pro 専用。持ち運び機には入れない
-#   Brewfile.vscode  — VS Code 拡張。`code` が PATH に載っている必要があり前提条件が違う
+#   Brewfile.vscode  — VS Code 本体と拡張。主に使うのは Zed / Neovim なので、必要な Mac にだけ入れる
 #
 # 更新手順:
 #   brew bundle dump --force --file=/tmp/bf && 目視レビューして反映
@@ -180,6 +180,7 @@ brew "zstd"
 #   使っていない:         daisydisk divvy ghostty hammerspoon ip-in-menu-bar licecap onyx pgadmin4 teamviewer
 #   どの設定からも参照していないフォント: font-iosevka-nerd-font font-monoid-nerd-font font-moralerspace
 #                         font-sauce-code-pro-nerd-font font-terminess-ttf-nerd-font font-victor-mono-nerd-font
+#   Brewfile.vscode へ移した: visual-studio-code
 cask "alfred"
 cask "anthropics/tap/ant", trusted: true # Claude API の CLI。Revolution の ai-writer のローカルの認証 (ant auth login)
 cask "antigravity"
@@ -227,7 +228,6 @@ cask "tabby"
 cask "tableplus"
 cask "todoist-app"
 cask "typeless"
-cask "visual-studio-code"
 cask "vlc"
 cask "zed"
 cask "zoom"

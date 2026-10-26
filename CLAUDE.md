@@ -33,7 +33,7 @@ The setup script performs:
 # setup.sh installs the core Brewfile automatically. The other two are opt-in:
 brew bundle install --file=~/dotfiles/Brewfile            # core (both machines)
 brew bundle install --file=~/dotfiles/Brewfile.desktop    # heavy / desktop-only
-brew bundle install --file=~/dotfiles/Brewfile.vscode     # VS Code extensions (needs `code` on PATH)
+brew bundle install --file=~/dotfiles/Brewfile.vscode     # VS Code itself + extensions
 
 # Update Homebrew packages
 brew update && brew upgrade

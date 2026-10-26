@@ -216,7 +216,7 @@ function phase_brew_bundle {
 		info "任意: brew bundle install --file=$dotfiles_dir/Brewfile.desktop"
 	fi
 	if [ -f "$dotfiles_dir/Brewfile.vscode" ]; then
-		info "任意: brew bundle install --file=$dotfiles_dir/Brewfile.vscode  (code が PATH に必要)"
+		info "任意: brew bundle install --file=$dotfiles_dir/Brewfile.vscode  (VS Code 本体と拡張)"
 	fi
 	if [ -f "$dotfiles_dir/Brewfile.mas" ]; then
 		info "任意: brew bundle install --file=$dotfiles_dir/Brewfile.mas  (App Store サインインが必要)"

@@ -1,9 +1,13 @@
-# Brewfile.vscode — VS Code 拡張
+# Brewfile.vscode — VS Code 本体と拡張（必要な Mac にだけ入れる）
 #
-# 前提: visual-studio-code が導入済みで `code` が PATH に載っていること
-#       （VS Code を起動し「Shell Command: Install 'code' command in PATH」を実行）。
-# 実行: brew bundle install --file=~/dotfiles/Brewfile.vscode
+# 主に使うエディタは Zed / Neovim なので、VS Code は core から外してここに置く（2026-10-27）。
+# setup.sh は本ファイルを呼ばない。必要な時に手で:
+#   brew bundle install --file=~/dotfiles/Brewfile.vscode
+#
+# `code` がまだ無い Mac でもこれ 1 本で済む。brew bundle は cask を入れてから拡張を入れる
+# （Homebrew の bundle/installer.rb。`code` が無ければ vscode_extension.rb の preinstall! も本体を入れる）。
 
+cask "visual-studio-code"
 vscode "aaron-bond.better-comments"
 vscode "alefragnani.project-manager"
 vscode "amazonwebservices.codewhisperer-for-command-line-companion"
