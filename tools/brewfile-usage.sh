@@ -10,7 +10,9 @@
 #
 #   何も入れない・消さない（読むだけ）。結果は参考情報なので、判定の結果では失敗にしない（exit 0）。
 #   tools/brewfile-audit.sh のように brew bundle を止める問題を検出するものではない。
-#   引数の誤りや前提の不足（Brewfile が無い・macOS でない・brew が無い）だけ exit 1 / 2 で止める。
+#   引数の誤りや前提の不足（Brewfile が無い・macOS でない・brew や python3 が使えない）だけ exit 1 / 2 で止める。
+#   Apple Silicon の brew は Command Line Tools 無しでも動くが、その場合 /usr/bin/python3 は
+#   CLT のインストールを促すだけで動かない（https://docs.brew.sh/Support-Tiers）。
 #   .app の場所は `brew info --json=v2` の artifacts の target から取るため、Homebrew 5.1.13 以降が要る
 #   （それより前の brew には target が無く、.app のある cask が「判定不可」になる。その場合は冒頭に警告を出す）。
 #   外すかどうかは、結果を見て人が決める。
@@ -54,8 +56,13 @@ DAYS="${2:-365}"           # これより前の痕跡しか無いものを「古
 case "$DAYS" in ''|*[!0-9]*) echo "ERROR: 日数は整数で指定する: $DAYS" >&2; exit 2 ;; esac
 [ "$(uname)" = Darwin ] || { echo "ERROR: macOS 専用（Spotlight と ~/Library を読む）" >&2; exit 1; }
 command -v brew > /dev/null 2>&1 || { echo "ERROR: brew が無い" >&2; exit 1; }
+PYTHON="$(command -v python3)" || { echo "ERROR: python3 が無い" >&2; exit 1; }
+if [ "$PYTHON" = /usr/bin/python3 ] && ! xcode-select -p > /dev/null 2>&1; then
+	echo "ERROR: Command Line Tools が無いため /usr/bin/python3 が使えない（xcode-select --install で入れる）" >&2
+	exit 1
+fi
 
-python3 - "$FILE" "$DAYS" <<'PY'
+"$PYTHON" - "$FILE" "$DAYS" <<'PY'
 import datetime, io, json, os, plistlib, re, subprocess, sys
 
 path = sys.argv[1]
