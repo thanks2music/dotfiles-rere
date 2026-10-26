@@ -12,7 +12,7 @@
 #   tools/brewfile-audit.sh のように brew bundle を止める問題を検出するものではない。
 #   引数の誤りや前提の不足（Brewfile が無い・macOS でない・brew が無い）だけ exit 1 / 2 で止める。
 #   .app の場所は `brew info --json=v2` の artifacts の target から取るため、Homebrew 5.1.13 以降が要る
-#   （それより前の brew には target が無く、.app のある cask が「判定不可」になる）。
+#   （それより前の brew には target が無く、.app のある cask が「判定不可」になる。その場合は冒頭に警告を出す）。
 #   外すかどうかは、結果を見て人が決める。
 #
 #   判定に使う痕跡（いちばん新しいものを採る）:
@@ -229,6 +229,11 @@ def judge(name, signals):
 
 if casks:
     info = installed_casks()
+    # target は Homebrew 5.1.13 で JSON に入った。古い brew だと .app の場所が分からず全部「判定不可」になるので、
+    # バージョン番号ではなく JSON の中身で確かめる
+    if any('app' in a and 'target' not in a for c in info.values() for a in c.get('artifacts', [])):
+        print("⚠ brew info の JSON に .app の target が無い（Homebrew 5.1.13 より前）。"
+              ".app のある cask は「判定不可」になる。brew update してから実行する。\n")
     for full in casks:
         c = info.get(full.split('/')[-1])
         if not c:
