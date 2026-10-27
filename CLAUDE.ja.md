@@ -30,10 +30,11 @@ cd ~/dotfiles
 
 ### パッケージ管理
 ```bash
-# core は setup.sh が自動導入する。残り 2 つは任意:
+# core は setup.sh が自動導入する。残り 3 つは任意:
 brew bundle install --file=~/dotfiles/Brewfile            # core（両方の Mac）
 brew bundle install --file=~/dotfiles/Brewfile.desktop    # 重量級・据置専用
-brew bundle install --file=~/dotfiles/Brewfile.vscode     # VS Code 拡張（code が PATH に必要）
+brew bundle install --file=~/dotfiles/Brewfile.vscode     # VS Code 本体と拡張
+brew bundle install --file=~/dotfiles/Brewfile.mas        # Mac App Store のアプリ（先に App Store にサインイン）
 
 # Homebrewパッケージを更新
 brew update && brew upgrade

@@ -1,9 +1,21 @@
-# Brewfile.vscode — VS Code 拡張
+# Brewfile.vscode — VS Code 本体と拡張（必要な Mac にだけ入れる）
 #
-# 前提: visual-studio-code が導入済みで `code` が PATH に載っていること
-#       （VS Code を起動し「Shell Command: Install 'code' command in PATH」を実行）。
-# 実行: brew bundle install --file=~/dotfiles/Brewfile.vscode
+# 主に使うエディタは Zed / Neovim なので、VS Code は core から外してここに置く（2026-10-27）。
+# setup.sh は本ファイルを呼ばない。必要な時に手で:
+#   brew bundle install --file=~/dotfiles/Brewfile.vscode
+#
+# `code` がまだ無い Mac でもこれ 1 本で済む。brew bundle は cask を入れてから拡張を入れる
+# （Homebrew の bundle/installer.rb。`code` が無ければ vscode_extension.rb の preinstall! も本体を入れる）。
+#
+# 意図的に外した拡張（2026-10-27 の棚卸し）。Pro にはまだ入っているので `brew bundle dump` には出てくるが、
+#   差分を反映するときに戻さない。拡張は使った記録が残らないため、使わなくなった技術と重複で判断した。
+#   使わない技術:   wordpresstoolbox.wordpress-toolbox sissel.shopify-liquid killalau.vscode-liquid-snippets
+#                   zhangciwu.swig-tpl bruno-api-client.bruno（Bruno 本体も外した）
+#   使っていないテーマ（使うのは Night Owl と material-icon-theme）: dracula-theme.theme-dracula
+#                   enkia.tokyo-night github.github-vscode-theme teabyii.ayu zhuangtongfa.material-theme
+#                   vscode-icons-team.vscode-icons
 
+cask "visual-studio-code"
 vscode "aaron-bond.better-comments"
 vscode "alefragnani.project-manager"
 vscode "amazonwebservices.codewhisperer-for-command-line-companion"
@@ -11,7 +23,6 @@ vscode "anthropic.claude-code"
 vscode "avneeshagarwal.react-nextjs-snippets"
 vscode "bmewburn.vscode-intelephense-client"
 vscode "bradlc.vscode-tailwindcss"
-vscode "bruno-api-client.bruno"
 vscode "burkeholland.simple-react-snippets"
 vscode "charliermarsh.ruff"
 vscode "christian-kohler.path-intellisense"
@@ -19,14 +30,11 @@ vscode "chunsen.bracket-select"
 vscode "dbaeumer.vscode-eslint"
 vscode "devsense.profiler-php-vscode"
 vscode "docker.docker"
-vscode "dracula-theme.theme-dracula"
 vscode "dsznajder.es7-react-js-snippets"
 vscode "ducfilan.pug-formatter"
 vscode "ecmel.vscode-html-css"
 vscode "editorconfig.editorconfig"
-vscode "enkia.tokyo-night"
 vscode "esbenp.prettier-vscode"
-vscode "github.github-vscode-theme"
 vscode "github.vscode-github-actions"
 vscode "glenn2223.live-sass"
 vscode "golang.go"
@@ -34,7 +42,6 @@ vscode "hediet.vscode-drawio"
 vscode "humao.rest-client"
 vscode "ibm.output-colorizer"
 vscode "ionutvmi.path-autocomplete"
-vscode "killalau.vscode-liquid-snippets"
 vscode "mechatroner.rainbow-csv"
 vscode "mosapride.zenkaku"
 vscode "ms-azuretools.vscode-containers"
@@ -63,20 +70,14 @@ vscode "sdras.night-owl"
 vscode "seatonjiang.gitmoji-vscode"
 vscode "shardulm94.trailing-spaces"
 vscode "shd101wyy.markdown-preview-enhanced"
-vscode "sissel.shopify-liquid"
 vscode "streetsidesoftware.code-spell-checker"
 vscode "syler.sass-indented"
-vscode "teabyii.ayu"
 vscode "tomoki1207.vscode-input-sequence"
 vscode "valeryanm.vscode-phpsab"
-vscode "vscode-icons-team.vscode-icons"
 vscode "vsls-contrib.gistfs"
 vscode "vunguyentuan.vscode-postcss"
-vscode "wordpresstoolbox.wordpress-toolbox"
 vscode "xdebug.php-debug"
 vscode "xdebug.php-pack"
 vscode "youssef.viow"
 vscode "yzhang.markdown-all-in-one"
-vscode "zhangciwu.swig-tpl"
-vscode "zhuangtongfa.material-theme"
 vscode "zobo.php-intellisense"

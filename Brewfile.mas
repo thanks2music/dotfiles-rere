@@ -11,23 +11,24 @@
 #   これらが失敗し、brew bundle が非ゼロ終了する。
 #
 #   そうなると「実パッケージのビルド失敗」と「Apple ID にサインインしていないだけ」を
-#   区別できなくなる。Brewfile.vscode を分けた理由 (前提条件が違う) と同じ判断。
+#   区別できなくなる。前提条件が違うので core とは別のファイルにする。
 #
 # 手順:
 #   1. App Store.app を開いて Apple ID でサインインする
 #   2. 上記コマンドを実行する
+#
+# 意図的に外したもの（2026-10-27 の棚卸し）。Pro にはまだ入っているので `brew bundle dump` には出てくるが、
+#   差分を反映するときに戻さない。使っているかは `bash tools/brewfile-usage.sh Brewfile.mas` で確かめた。
+#   使っていない: AdBlock Pro と Vimari（どちらも Safari 拡張。ブラウザは Chrome を使う） JPEGmini（ImageOptim を使う）
+#                 Things（Todoist を使う）
 
-mas "AdBlock Pro", id: 1018301773
 mas "Be Focused Pro", id: 961632517
-mas "JPEGmini", id: 498944723
 mas "Keyknockr", id: 6478761835
 mas "Keynote", id: 409183694
 mas "LINE", id: 539883307
 mas "MWeb Pro", id: 1403919533
 mas "Numbers", id: 361304891
 mas "PopClip", id: 445189367
-mas "RunCat", id: 1429033973
+mas "RunCatNeo", id: 6757801838 # 旧版の RunCat（1429033973）とは別のアプリ
 mas "ScreenBrush", id: 1233965871
 mas "The Unarchiver", id: 425424353
-mas "Things", id: 904280696
-mas "Vimari", id: 1480933944

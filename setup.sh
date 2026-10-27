@@ -210,13 +210,13 @@ function phase_brew_bundle {
 	}
 	ok "core パッケージ導入完了"
 
-	# desktop 側は任意。重量級（Xcode / Adobe CC / IDE / ゲーム / メディア系）を含むため
+	# desktop 側は任意。重量級（Xcode / Adobe CC / iOS 実機ツール / メディア系）を含むため
 	# 自動では入れない。持ち運び機には core だけで足りる。
 	if [ -f "$dotfiles_dir/Brewfile.desktop" ]; then
 		info "任意: brew bundle install --file=$dotfiles_dir/Brewfile.desktop"
 	fi
 	if [ -f "$dotfiles_dir/Brewfile.vscode" ]; then
-		info "任意: brew bundle install --file=$dotfiles_dir/Brewfile.vscode  (code が PATH に必要)"
+		info "任意: brew bundle install --file=$dotfiles_dir/Brewfile.vscode  (VS Code 本体と拡張)"
 	fi
 	if [ -f "$dotfiles_dir/Brewfile.mas" ]; then
 		info "任意: brew bundle install --file=$dotfiles_dir/Brewfile.mas  (App Store サインインが必要)"

@@ -5,11 +5,13 @@
 #
 # 分離の理由:
 #   Brewfile.desktop — 重量級・Pro 専用。持ち運び機には入れない
-#   Brewfile.vscode  — VS Code 拡張。`code` が PATH に載っている必要があり前提条件が違う
+#   Brewfile.vscode  — VS Code 本体と拡張。主に使うのは Zed / Neovim なので、必要な Mac にだけ入れる
 #
 # 更新手順:
 #   brew bundle dump --force --file=/tmp/bf && 目視レビューして反映
 #   （dump は一度きりの実験や事故インストールもそのまま拾うため、必ず差分を見る）
+#   ⚠️ `brew bundle cleanup`（--global を含む）は使わない。Brewfile を 4 本に分けているため、
+#      desktop / mas / vscode に書いたもの（VS Code 本体と拡張を含む）まで削除対象になる。
 #
 # 検証: brew bundle check --file=Brewfile
 
@@ -173,60 +175,47 @@ brew "zsh-autosuggestions"
 brew "zsh-completions"
 brew "zsh-git-prompt"
 brew "zstd"
+# 意図的に外した cask（2026-10-27 の棚卸し）。Pro にはまだ入っているので `brew bundle dump` には出てくるが、
+#   差分を反映するときに戻さない。使っているかは `bash tools/brewfile-usage.sh` で確かめた。
+#   .app を削除済み:      bartender clipy dbeaver-community github gitify gyazo keyboard-cleaner poedit smartsvn
+#   1 年以上使っていない: bruno deepl flutter（普段は fvm 経由） switchhosts typora whatsapp
+#   使っていない:         daisydisk divvy ghostty hammerspoon ip-in-menu-bar licecap onyx pgadmin4 teamviewer
+#   使っているアプリの設定から参照していないフォント: font-iosevka-nerd-font font-monoid-nerd-font
+#                         font-moralerspace font-terminess-ttf-nerd-font font-victor-mono-nerd-font
+#                         font-sauce-code-pro-nerd-font（config/alacritty だけが参照。Alacritty 本体は入れていない）
+#   Brewfile.vscode へ移した: visual-studio-code
 cask "alfred"
 cask "anthropics/tap/ant", trusted: true # Claude API の CLI。Revolution の ai-writer のローカルの認証 (ant auth login)
 cask "antigravity"
 cask "antigravity-cli"
 cask "appcleaner"
-cask "bartender"
 cask "bettertouchtool"
 cask "brave-browser"
-cask "bruno"
 # chromium は 2026-09-01 に disabled になる（`disable_reason: fails_gatekeeper_check`）。
 #   disabled になった cask は `brew bundle install` を**ハード失敗**させる（qblocker で実証済み）。
 #   Chromium 系の用途は brave-browser / google-chrome で満たせるため core から外す。
 #   必要なら `brew install --cask chromium` で手動導入できる（無効化日まで）。
 cask "claude"
-cask "clipy"
 cask "codex"
-cask "daisydisk"
 cask "dash"
-cask "dbeaver-community"
-cask "deepl"
 cask "discord"
-cask "divvy"
 cask "docker-desktop" # Docker Desktop。backlog 系 MCP 2 つが docker で起動するため必須
 cask "drawio"
 cask "dropbox"
 cask "figma"
 cask "firefox"
-cask "flutter"
 cask "font-fira-code-nerd-font"
 cask "font-hack-nerd-font"
-cask "font-iosevka-nerd-font"
 cask "font-meslo-lg-nerd-font"
-cask "font-monoid-nerd-font"
-cask "font-moralerspace"
 cask "font-noto-nerd-font"
-cask "font-sauce-code-pro-nerd-font"
-cask "font-terminess-ttf-nerd-font"
-cask "font-victor-mono-nerd-font"
 cask "gcloud-cli"
-cask "ghostty"
-cask "github"
-cask "gitify"
 cask "google-chrome"
-cask "gyazo"
-cask "hammerspoon"
 cask "hhkb"
 cask "hiddenbar"
 cask "imageoptim"
-cask "ip-in-menu-bar"
 cask "iterm2"
 cask "karabiner-elements"
 cask "keepingyouawake"
-cask "keyboard-cleaner"
-cask "licecap"
 cask "microsoft-auto-update"
 cask "microsoft-teams"
 cask "mysql-shell"
@@ -234,23 +223,14 @@ cask "ngrok"
 cask "notion"
 cask "notion-calendar"
 cask "obsidian"
-cask "onyx"
-cask "pgadmin4"
-cask "poedit"
 cask "postman"
 cask "session-manager-plugin"
 cask "sip-app"
 cask "slack"
-cask "smartsvn"
-cask "switchhosts"
 cask "tabby"
 cask "tableplus"
-cask "teamviewer"
 cask "todoist-app"
 cask "typeless"
-cask "typora"
-cask "visual-studio-code"
 cask "vlc"
-cask "whatsapp"
 cask "zed"
 cask "zoom"
